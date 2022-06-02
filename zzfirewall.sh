@@ -199,7 +199,17 @@ if [ -d /etc/pure-ftpd/conf/ ]; then
   
   fxMessage "pure-ftpd found! Updating PassivePortRange..."
   rm -f /etc/pure-ftpd/conf/PassivePortRange
-  ln -s "${WEBSTACKUP_CONFIG_DIR}pure-ftpd/PassivePortRange" "/etc/pure-ftpd/conf/PassivePortRange"
+  
+  if [ -f "/usr/local/turbolab.it/webstackup/config/pure-ftpd/PassivePortRange" ]; then
+  
+    ln -s "/usr/local/turbolab.it/webstackup/config/pure-ftpd/PassivePortRange" "/etc/pure-ftpd/conf/PassivePortRange"
+
+  else
+  
+    curl -o "/etc/pure-ftpd/conf/PassivePortRange" https://raw.githubusercontent.com/TurboLabIt/webstackup/master/config/pure-ftpd/PassivePortRange
+    
+  fi
+  
   ls -la /etc/pure-ftpd/conf/
   cat /etc/pure-ftpd/conf/PassivePortRange
   service pure-ftpd restart
