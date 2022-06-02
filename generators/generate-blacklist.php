@@ -9,21 +9,6 @@ $txtBlacklist   .= PHP_EOL . '## See: https://github.com/TurboLabIt/zzfirewall/'
 
 
 /**
- * Deny connections from some ready-to-use blacklists
- * ============================================
- */
-$arrLists = [
-    'https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/blacklist.txt',
-];
-
-foreach($arrLists as $oneList) {
-
-    echo "⚙️ Adding from  " . $oneList . "..." . PHP_EOL;
-    $txtBlacklist   .= PHP_EOL . PHP_EOL . file_get_contents($oneList);
-}
-
-
-/**
  * Writing the file...
  * ===================
  */
