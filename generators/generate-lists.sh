@@ -25,3 +25,5 @@ fxTitle "☁️ Git pull and push..."
 git -C ${SCRIPT_DIR}../ pull --no-edit
 git -C ${SCRIPT_DIR}../ push
 
+fxEndFooter
+

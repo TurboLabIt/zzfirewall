@@ -10,7 +10,7 @@ curl -s https://raw.githubusercontent.com/TurboLabIt/bash-fx/master/setup.sh?$(d
 source /usr/local/turbolab.it/bash-fx/bash-fx.sh
 ## bash-fx is ready
 
-sudo bash /usr/local/turbolab.it/bash-fx/setup/begin.sh ${SCRIPT_NAME}
+sudo bash /usr/local/turbolab.it/bash-fx/setup/start.sh ${SCRIPT_NAME}
 
 ## Symlink (globally-available zzfirewall command)
 if [ ! -f "/usr/local/bin/${SCRIPT_NAME}" ]; then
@@ -30,5 +30,5 @@ if [ ! -f "/etc/cron.d/zzfirewall" ]; then
   cp "${INSTALL_DIR}cron" "/etc/cron.d/zzfirewall"
 fi
 
-sudo bash /usr/local/turbolab.it/bash-fx/setup/end.sh ${SCRIPT_NAME}
+sudo bash /usr/local/turbolab.it/bash-fx/setup/the-end.sh ${SCRIPT_NAME}
 
