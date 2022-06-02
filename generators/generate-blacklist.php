@@ -14,40 +14,12 @@ $txtBlacklist   .= PHP_EOL . '## See: https://github.com/TurboLabIt/zzfirewall/'
  */
 $arrLists = [
     'https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/blacklist.txt',
-    'https://raw.githubusercontent.com/ktsaou/blocklist-ipsets/master/firehol_level1.netset'
 ];
 
 foreach($arrLists as $oneList) {
 
     echo "⚙️ Adding from  " . $oneList . "..." . PHP_EOL;
     $txtBlacklist   .= PHP_EOL . PHP_EOL . file_get_contents($oneList);
-}
-
-
-/**
- * Deny connections from ipsum
- * ===========================
- */
-const IPSUM_BLACKLIST_URL = 'https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt';
-echo "⚙️ Adding from " . IPSUM_BLACKLIST_URL . "..." . PHP_EOL;
-$txtIpsum = file_get_contents(IPSUM_BLACKLIST_URL);
-$arrIpsum = explode(PHP_EOL, $txtIpsum);
-foreach($arrIpsum as $lineIpsum) {
-
-    if( empty(trim($lineIpsum)) || $lineIpsum[0] == '#' ) {
-        $txtBlacklist   .= PHP_EOL . $lineIpsum;
-        continue;
-    }
-
-    // format: IP_ADDRESS\tNUMBER_OF_BLACKLISTS
-    $arrPieces = explode("\t", $lineIpsum);
-
-    // let's exclude those with 2 or less reports
-    if( empty($arrPieces) || count($arrPieces) != 2 || $arrPieces[1] <= 2 ) {
-        continue;
-    }
-
-    $txtBlacklist .= PHP_EOL . $arrPieces[0];
 }
 
 
