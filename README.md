@@ -1,4 +1,4 @@
-# webstackup
+# zzfirewall
 
 iptables rules to shut off undesired connections and clients from certain geos
 
