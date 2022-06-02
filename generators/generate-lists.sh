@@ -15,12 +15,12 @@ source "/usr/local/turbolab.it/zzfirewall/base.sh"
 
 printMessage "🤝 Generate whitelist..."
 echo ""
-php ${SCRIPT_DIR}generate-whitelist.php
+XDEBUG_MODE=off php ${SCRIPT_DIR}generate-whitelist.php
 echo ""
 
 printMessage "🧱 Generate blacklist..."
 echo ""
-php ${SCRIPT_DIR}generate-blacklist.php
+XDEBUG_MODE=off php ${SCRIPT_DIR}generate-blacklist.php
 echo ""
 
 printMessage "✔️ Git commit..."
