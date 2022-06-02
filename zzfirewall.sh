@@ -133,7 +133,7 @@ createIpSet zzfw_GeoKorea "$IP_BLACKLIST_KOREA_FULLPATH"
 createIpSet zzfw_GeoRussia "$IP_BLACKLIST_RUSSIA_FULLPATH"
 
 fxTitle "🧹 Delete the temp folder..."
-#rm -rf $DOWNLOADED_LIST_DIR
+rm -rf $DOWNLOADED_LIST_DIR
 
 fxTitle "🚪 Creating iptables rules..."
 
