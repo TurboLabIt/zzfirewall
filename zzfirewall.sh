@@ -133,28 +133,34 @@ createIpSet zzfw_GeoRussia "$IP_BLACKLIST_RUSSIA_FULLPATH"
 
 fxTitle "🚪 Creating iptables rules..."
 
-fxMessage "🏡 Allow from localhost..."
-iptables -A INPUT -i lo -j ACCEPT
+MSG="🏡 Allow from loopback"
+fxMessage "$MSG"
+iptables -A INPUT -i lo -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
 
-fxMessage "🎅 Drop XMAS packets..."
-iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
+MSG="🎅 Drop XMAS packets"
+fxMessage "$MSG"
+iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP -m comment --comment "$MSG (zzfw)" && fxOK
 
-fxMessage "💩 Drop null packets..."
-iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
+MSG="💩 Drop null packets"
+fxMessage "$MSG"
+iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP -m comment --comment "$MSG (zzfw)" && fxOK
 
-fxMessage "📤 Allow ESTABLISHED,RELATED..."
-iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+MSG="📤 Allow EST,REL"
+fxMessage "$MSG"
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
 
-fxMessage "🏡 Allow connections from LAN..."
-iptables -A INPUT -s 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 -j ACCEPT
+MSG="🏡 Allow connections from LAN"
+fxMessage "$MSG"
+iptables -A INPUT -s 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
 
-fxMessage "👐 Enable ipset whitelist..."
-iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT
+MSG="👐 Enable ipset whitelist"
+fxMessage "$MSG"
+iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
 
 function addDropRule()
 {
   fxMessage "🛑 Enable ipset ${1}..."
-  iptables -A INPUT -m set --match-set ${1} src -j DROP
+  iptables -A INPUT -m set --match-set ${1} src -j DROP -m comment --comment "🧱 ipset $1 (zzfw)" && fxOK
 }
 
 addDropRule zzfw_Blacklist
@@ -164,23 +170,28 @@ addDropRule zzfw_GeoIndia
 addDropRule zzfw_GeoKorea
 addDropRule zzfw_GeoRussia
 
-fxMessage "🐧 Allow SSH..."
-iptables -A INPUT -p tcp -m multiport --dport 22,222 -j ACCEPT
+MSG="🐧 Allow SSH"
+fxMessage "$MSG"
+iptables -A INPUT -p tcp -m multiport --dport 22,222 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
 
-fxMessage "📁 Allow FTP/FTPS"
-iptables -A INPUT -p tcp -m multiport --dport 20,21,990,2121:2221 -j ACCEPT
+MSG="📁 Allow FTP/FTPS"
+fxMessage "$MSG"
+iptables -A INPUT -p tcp -m multiport --dport 20,21,990,2121:2221 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
 
-fxMessage "💌 Allow SMTP..."
-iptables -A INPUT -p tcp --dport 25 -j ACCEPT
+MSG="💌 Allow SMTP"
+fxMessage "$MSG"
+iptables -A INPUT -p tcp --dport 25 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
 
-fxMessage "🌎 Allow HTTP(s)..."
-iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT
+MSG="🌎 Allow HTTP(s)"
+fxMessage "$MSG"
+iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
 
-fxMessage "📉 Allow monitor..."
-iptables -A INPUT -p tcp -m multiport --dport 5666 -j ACCEPT
+MSG="📉 Allow monitor"
+fxMessage "$MSG"
+iptables -A INPUT -p tcp -m multiport --dport 5666 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
 
 fxMessage "🛑 Drop everything else..."
-iptables -A INPUT -j DROP
+iptables -A INPUT -j DROP -m comment --comment "$MSG (zzfw)" && fxOK
 
 
 fxTitle "🍃 Looking for pure-ftpd..."
@@ -193,7 +204,8 @@ if [ -d /etc/pure-ftpd/conf/ ]; then
   cat /etc/pure-ftpd/conf/PassivePortRange
   service pure-ftpd restart
   
-else 
+else
+
   fxMessage "pure-ftpd not found. No PassivePortRange updated."
 fi
 
@@ -218,4 +230,3 @@ fxTitle "Need the log?"
 fxMessage "nano ${IP_LOG_FILE}"
 
 fxEndFooter
-
