@@ -76,46 +76,11 @@ IP_BLACKLIST_RUSSIA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-russia.txt
 curl -Lo "${IP_BLACKLIST_RUSSIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/russia.txt?$(date +%s)
 
 
-fxTitle "Checking ufw...."
-if [ -z "$(command -v ufw)" ]; then
-
-  fxMessage "✔ ufw is not installed"
-  UFW_INACTIVE=1
-  
-else
-
-  ufw status | grep -qw active
-  UFW_INACTIVE=$?
-fi
-  
-if [ $UFW_INACTIVE != 1 ]; then
-
-  fxMessage "Disabling ufw..."
-  ufw --force reset
-  ufw disable
-  
-else 
-  
-  fxMessage "✔ ufw is not enabled"
-fi
-
-
-fxTitle "🧹 Try to uninstall iptables-persistent..."
-apt purge iptables-persistent -y
-
-
-fxTitle "🧹 Reset iptables..."
-bash ${SCRIPT_DIR}zzfirewall-reset.sh
-
-
-fxTitle "🧹 Cleaning up previous ipset..."
-ipset destroy
-
-
 function createIpSet()
 {
   fxTitle "🧱 Building ipset $1 from file..."
-  ipset create $1 nethash
+  ipset flush $1
+  ipset create $1 nethash -exist
   while read -r line || [[ -n "$line" ]]; do
     local FIRSTCHAR="${line:0:1}"
     if [ "$FIRSTCHAR" != "#" ] && [ "$FIRSTCHAR" != "" ]; then
@@ -135,6 +100,10 @@ createIpSet zzfw_GeoRussia "$IP_BLACKLIST_RUSSIA_FULLPATH"
 
 fxTitle "🧹 Delete the temp folder..."
 rm -rf $DOWNLOADED_LIST_DIR
+
+
+fxTitle "🧹 Reset iptables..."
+bash ${SCRIPT_DIR}zzfirewall-reset.sh
 
 fxTitle "🚪 Creating iptables rules..."
 
