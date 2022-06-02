@@ -103,14 +103,12 @@ bash ${SCRIPT_DIR}zzfirewall-reset.sh
 
 
 fxTitle "🧹 Cleaning up previous ipset..."
-ipset destroy PersonaNonGrata
-ipset destroy zzfirewall
+ipset destroy
 
 
 function createIpSet()
 {
   fxTitle "🧱 Building ipset $1 from file..."
-  ipset destroy $1
   ipset create $1 nethash
   while read -r line || [[ -n "$line" ]]; do
     local FIRSTCHAR="${line:0:1}"
