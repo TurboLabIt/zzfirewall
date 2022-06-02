@@ -49,6 +49,10 @@ if [ ! -e "/usr/bin/${SCRIPT_NAME}-reset" ]; then
   ln -s ${INSTALL_DIR}${SCRIPT_NAME}-reset.sh /usr/local/bin/${SCRIPT_NAME}-reset
 fi
 
+if [ ! -e "/usr/bin/${SCRIPT_NAME}-generate" ]; then
+  ln -s ${INSTALL_DIR}generators/generate-lists.sh /usr/local/bin/${SCRIPT_NAME}-generate
+fi
+
 ## Copy the cron job
 if [ ! -f "/etc/cron.d/zzfirewall" ]; then
   cp "${INSTALL_DIR}cron" "/etc/cron.d/zzfirewall"
