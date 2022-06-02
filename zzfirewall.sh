@@ -107,7 +107,6 @@ ipset destroy PersonaNonGrata
 ipset destroy zzfirewall
 
 
-fxTitle "☀ Creating new sets..."
 function createIpSet()
 {
   fxTitle "🧱 Building ipset $1 from file..."
@@ -153,14 +152,14 @@ MSG="🏡 Allow connections from LAN"
 fxMessage "$MSG"
 iptables -A INPUT -s 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
 
-MSG="👐 Enable ipset whitelist"
+MSG="👐 whitelist ipset"
 fxMessage "$MSG"
-iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
+iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT && fxOK
 
 function addDropRule()
 {
   fxMessage "🛑 Enable ipset ${1}..."
-  iptables -A INPUT -m set --match-set ${1} src -j DROP -m comment --comment "🧱 ipset $1 (zzfw)" && fxOK
+  iptables -A INPUT -m set --match-set ${1} src -j DROP && fxOK
 }
 
 addDropRule zzfw_Blacklist
@@ -190,7 +189,8 @@ MSG="📉 Allow monitor"
 fxMessage "$MSG"
 iptables -A INPUT -p tcp -m multiport --dport 5666 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
 
-fxMessage "🛑 Drop everything else..."
+MSG="🛑 Drop everything else"
+fxMessage "$MSG"
 iptables -A INPUT -j DROP -m comment --comment "$MSG (zzfw)" && fxOK
 
 
@@ -216,7 +216,7 @@ if [ -d /etc/pure-ftpd/conf/ ]; then
   
 else
 
-  fxMessage "pure-ftpd not found. No PassivePortRange updated."
+  fxMessage "pure-ftpd not found. No PassivePortRange update"
 fi
 
 function printIpSet()
