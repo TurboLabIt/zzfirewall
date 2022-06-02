@@ -21,11 +21,11 @@ $txtWhitelist   .= PHP_EOL . PHP_EOL . file_get_contents(WSA_WHITELIST_URL);
  */
 const GOOGLE_WHITELIST_URL = 'https://www.gstatic.com/ipranges/goog.json';
 echo "⚙️ Adding from Google " . GOOGLE_WHITELIST_URL . "..." . PHP_EOL;
-$txtWhitelist   .= PHP_EOL . PHP_EOL . '## 🔎 Allow from Google - ' . GOOGLE_WHITELIST_URL;
+$txtWhitelist   .= PHP_EOL . PHP_EOL . '## 🔎 Allow from Google - ' . GOOGLE_WHITELIST_URL . PHP_EOL;
 $txtGoogle = file_get_contents(GOOGLE_WHITELIST_URL);
 $arrGoogle = json_decode($txtGoogle);
 
-$txtGoogle="";
+$txtGoogle = "";
 foreach($arrGoogle->prefixes as $oneItem) {
 
     if( empty($oneItem->ipv4Prefix) ) {
@@ -43,13 +43,13 @@ $txtWhitelist .= $txtGoogle;
  */
 const WHITELIST_OUT_PATH = '/usr/local/turbolab.it/zzfirewall/lists/autogen/';
 
-$filePath = WHITELIST_OUT_PATH . 'whitelist.txt'
+$filePath = WHITELIST_OUT_PATH . 'whitelist.txt';
 echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
 file_put_contents($filePath, $txtWhitelist);
 
-$filePath = WHITELIST_OUT_PATH . 'google.txt'
+$filePath = WHITELIST_OUT_PATH . 'google.txt';
 echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
 file_put_contents($filePath, $txtGoogle);
 
+echo PHP_EOL . "✅ " . basename(__FILE__, '.php') . " is DONE" . PHP_EOL;
 
-echo PHP_EOL . basename(__FILE__, '.php') . " is DONE" . PHP_EOL;

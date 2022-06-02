@@ -30,8 +30,8 @@ foreach($arrLists as $oneList) {
  */
 const IPSUM_BLACKLIST_URL = 'https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt';
 echo "⚙️ Adding from " . IPSUM_BLACKLIST_URL . "..." . PHP_EOL;
-$txtIpsum   = file_get_contents(IPSUM_BLACKLIST_URL);
-$arrIpsum   = explode(PHP_EOL, $txtIpsum);
+$txtIpsum = file_get_contents(IPSUM_BLACKLIST_URL);
+$arrIpsum = explode(PHP_EOL, $txtIpsum);
 foreach($arrIpsum as $lineIpsum) {
 
     if( empty(trim($lineIpsum)) || $lineIpsum[0] == '#' ) {
@@ -60,5 +60,5 @@ const BLACKLIST_OUT_PATH = '/usr/local/turbolab.it/zzfirewall/lists/autogen/blac
 echo "⚙️ Writing the file to " . BLACKLIST_OUT_PATH . "..." . PHP_EOL;
 file_put_contents(BLACKLIST_OUT_PATH, $txtBlacklist);
 
-echo PHP_EOL . basename(__FILE__, '.php') . " is DONE" . PHP_EOL;
+echo PHP_EOL . "✅ " .basename(__FILE__, '.php') . " is DONE" . PHP_EOL;
 
