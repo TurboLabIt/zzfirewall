@@ -58,7 +58,7 @@ iptables -t mangle -X
 iptables -t raw -F
 iptables -t raw -X
 
-echo -e "\e[1;33m Saving... \e[0m"
-
 echo -e "\e[1;32m ✔ Firewall reset completed! \e[0m"
+iptables -nL
+
 
