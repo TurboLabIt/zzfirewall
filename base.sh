@@ -1,9 +1,3 @@
-## Title and graphics
-FRAME="O===========================================================O"
-echo "$FRAME"
-echo -e "\t $SCRIPT_NAME - $(date)"
-echo "$FRAME"
-
 ## Enviroment variables
 TIME_START="$(date +%s)"
 DOWEEK="$(date +'%u')"
@@ -33,6 +27,12 @@ function zzfirewallConfigSet()
 }
 
 zzfirewallConfigSet "$CONFIGFILE_FULLPATH_DEFAULT" "$CONFIGFILE_FULLPATH_ETC" "$CONFIGFILE_FULLPATH_DIR"
+
+
+function printMessage()
+{
+  echo -e "\e[1;33m $1... \e[0m"
+}
 
 ## Footer function
 function zzfirewallPrintEndFooter()
