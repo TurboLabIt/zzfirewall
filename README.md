@@ -8,7 +8,7 @@ iptables rules to shut off undesired connections and clients from certain geos
 Just execute:
 
 ````bash
-sudo apt install curl -y && curl -s https://raw.githubusercontent.com/TurboLabIt/zzfirewall/master/setup.sh?$(date +%s) | sudo bash`
+sudo apt install curl -y && curl -s https://raw.githubusercontent.com/TurboLabIt/zzfirewall/master/setup.sh?$(date +%s) | sudo bash
 
 ````
 
