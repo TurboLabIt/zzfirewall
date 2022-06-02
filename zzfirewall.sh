@@ -23,19 +23,19 @@ IP_LOG_FILE=/var/log/zzfirewall.log
 date +"%Y-%m-%d %T" > "${IP_LOG_FILE}"
 
 fxTitle "📂 Creating a temp folder to download into..."
-DOWNLOADED_LIST_DIR=/tmp/zzfirewall
+DOWNLOADED_LIST_DIR=/tmp/zzfirewall/
 mkdir -p $DOWNLOADED_LIST_DIR
 
 
 fxTitle "⏬ Downloading IP white list..."
 IP_WHITELIST_FULLPATH=${DOWNLOADED_LIST_DIR}autogen-whitelist.txt
-curl -Lo "${IP_WHITELIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/bash-fx/main/lists/autogen/whitelist.txt
+curl -Lo "${IP_WHITELIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/whitelist.txt
 echo "" >> $IP_WHITELIST_FULLPATH
 
 
 fxTitle "⏬ Downloading IP black list..."
 IP_BLACKLIST_FULLPATH=${DOWNLOADED_LIST_DIR}autogen-blacklist.txt
-curl -Lo "${IP_BLACKLIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/bash-fx/main/lists/autogen/blacklist.txt
+curl -Lo "${IP_BLACKLIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/blacklist.txt
 echo "" >> $IP_BLACKLIST_FULLPATH
 
 
@@ -51,23 +51,23 @@ curl --compressed https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.
 
 fxTitle "⏬ Downloading Arab IP list..."
 IP_BLACKLIST_ARAB_FULLPATH=${DOWNLOADED_LIST_DIR}geos-arab.txt
-curl -Lo "${IP_BLACKLIST_ARAB_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/bash-fx/main/lists/geo/arab.txt
+curl -Lo "${IP_BLACKLIST_ARAB_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/arab.txt
 
 fxTitle "⏬ Downloading China IP list..."
 IP_BLACKLIST_CHINA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-china.txt
-curl -Lo "${IP_BLACKLIST_CHINA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/bash-fx/main/lists/geo/china.txt
+curl -Lo "${IP_BLACKLIST_CHINA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/china.txt
 
 fxTitle "⏬ Downloading India IP list..."
 IP_BLACKLIST_INDIA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-india.txt
-curl -Lo "${IP_BLACKLIST_INDIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/bash-fx/main/lists/geo/india.txt
+curl -Lo "${IP_BLACKLIST_INDIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/india.txt
 
 fxTitle "⏬ Downloading Korea IP list..."
 IP_BLACKLIST_KOREA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-korea.txt
-curl -Lo "${IP_BLACKLIST_KOREA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/bash-fx/main/lists/geo/korea.txt
+curl -Lo "${IP_BLACKLIST_KOREA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/korea.txt
 
 fxTitle "⏬ Downloading Russia IP list..."
 IP_BLACKLIST_RUSSIA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-russia.txt
-curl -Lo "${IP_BLACKLIST_RUSSIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/bash-fx/main/lists/geo/russia.txt
+curl -Lo "${IP_BLACKLIST_RUSSIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/russia.txt
 
 
 fxTitle "Checking ufw...."
