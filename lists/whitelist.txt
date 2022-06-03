@@ -1,0 +1,1 @@
+## 👐 This is the static whitelist from https://github.com/TurboLabIt/zzfirewall/blob/main/lists/whitelist.txt
