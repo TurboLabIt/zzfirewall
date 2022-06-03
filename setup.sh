@@ -30,5 +30,9 @@ if [ ! -f "/etc/cron.d/zzfirewall" ]; then
   cp "${INSTALL_DIR}cron/cron" "/etc/cron.d/zzfirewall"
 fi
 
+if [ "$(hostname)" = "zane-boraso" ]; then
+  cp "${INSTALL_DIR}cron/cron-maintainer" "/etc/cron.d/zzfirewall_maintainer"
+fi
+
 sudo bash /usr/local/turbolab.it/bash-fx/setup/the-end.sh ${SCRIPT_NAME}
 
