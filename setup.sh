@@ -27,7 +27,7 @@ fi
 
 ## Copy the cron job
 if [ ! -f "/etc/cron.d/zzfirewall" ]; then
-  cp "${INSTALL_DIR}cron" "/etc/cron.d/zzfirewall"
+  cp "${INSTALL_DIR}cron/cron" "/etc/cron.d/zzfirewall"
 fi
 
 sudo bash /usr/local/turbolab.it/bash-fx/setup/the-end.sh ${SCRIPT_NAME}

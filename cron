@@ -1,6 +1,0 @@
-SHELL=/bin/bash
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
-
-## Firewall setup, every morning
-0 7 * * * root bash "/usr/local/turbolab.it/zzfirewall/cron.sh" > /dev/null 2>&1 
-

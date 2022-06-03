@@ -1,0 +1,7 @@
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+## Firewall setup
+# note: the project maintainer updates the lists at https://github.com/TurboLabIt/zzfirewall/blob/main/cron/cron-maintainer
+50 12 * * * root bash "/usr/local/turbolab.it/zzfirewall/cron/cron.sh" > /dev/null 2>&1 
+
