@@ -141,7 +141,7 @@ insertAfterIpsetRules
 function createIpSet()
 {
   fxTitle "🧱 Building ipset $1 from file..."
-  ipset create $1 nethash
+  ipset create $1 nethash -exist
   while read -r line || [[ -n "$line" ]]; do
     local FIRSTCHAR="${line:0:1}"
     if [ "$FIRSTCHAR" != "#" ] && [ "$FIRSTCHAR" != "" ]; then
