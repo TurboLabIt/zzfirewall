@@ -1,4 +1,4 @@
-## 🛑 This is the static blacklist from https://github.com/TurboLabIt/zzfirewall/main/lists/blacklist.txt
+## 🛑 This is the static blacklist from https://github.com/TurboLabIt/zzfirewall/blob/main/lists/blacklist.txt
 
 ##  Hostname turbolab.it provided via SNI, but no hostname provided in HTTP request
 109.248.237.61
