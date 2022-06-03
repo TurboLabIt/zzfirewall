@@ -26,6 +26,7 @@ date +"%Y-%m-%d %T" > "${IP_LOG_FILE}"
 
 fxTitle "📂 Creating a temp folder to download into..."
 DOWNLOADED_LIST_DIR=/tmp/zzfirewall/
+rm -rf $DOWNLOADED_LIST_DIR
 mkdir -p $DOWNLOADED_LIST_DIR
 
 
@@ -34,13 +35,14 @@ IP_WHITELIST_FULLPATH=${DOWNLOADED_LIST_DIR}autogen-whitelist.txt
 curl -Lo "${IP_WHITELIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/whitelist.txt?$(date +%s)
 echo "" >> $IP_WHITELIST_FULLPATH
 
+fxTitle "⏬ Appending https://github.com/TurboLabIt/zzfirewall/blob/main/lists/whitelist.txt ..."
+curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/whitelist.txt?$(date +%s) >> $IP_WHITELIST_FULLPATH
+echo "" >> $IP_WHITELIST_FULLPATH
 
 fxTitle "⏬ Downloading combined IP black list..."
 IP_BLACKLIST_FULLPATH=${DOWNLOADED_LIST_DIR}autogen-blacklist.txt
 curl -Lo "${IP_BLACKLIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/blacklist.txt?$(date +%s)
 echo "" >> $IP_BLACKLIST_FULLPATH
-
-
 
 fxTitle "⏬ Appending https://github.com/TurboLabIt/zzfirewall/blob/main/lists/blacklist.txt ..."
 echo "## https://github.com/TurboLabIt/zzfirewall/blob/main/lists/blacklist.txt" >> $IP_BLACKLIST_FULLPATH
