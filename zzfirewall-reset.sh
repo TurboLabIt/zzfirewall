@@ -33,14 +33,18 @@ iptables-save | awk '/^[*]/ { print $1 }
 if [ "$LIGHT_MODE" = 0 ]; then
   fxTitle "🧹 Remove all ipsets..."
   ipset flush
-  ipset destroy
 
   ## Set cannot be destroyed: it is in use by a kernel component
   # https://github.com/weaveworks/weave/issues/3847
   sleep 2
   ipset destroy
-  sleep 3
-  ipset destroy
+  
+  if [ $? -ne 0 ]; then
+    fxMessage "Failed - retrying..."
+    sleep 3
+    ipset destroy
+  fi
+ 
 fi
 
 fxTitle "🧱 Current status"
