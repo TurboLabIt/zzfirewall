@@ -31,11 +31,11 @@ if [ ! -f "/etc/cron.d/zzfirewall" ]; then
 fi
 
 if [ ! -f "/etc/cron.d/zzfirewall_ddns_update" ]; then
-  cp "${INSTALL_DIR}cron/cron-ddns" "/etc/cron.d/zzfirewall_ddns_update"
+  cp "${INSTALL_DIR}ddns/cron" "/etc/cron.d/zzfirewall_ddns_update"
 fi
 
 if [ "$(hostname)" = "zane-boraso" ]; then
-  cp "${INSTALL_DIR}cron/cron-maintainer" "/etc/cron.d/zzfirewall_maintainer"
+  cp "${INSTALL_DIR}generators/cron-maintainer" "/etc/cron.d/zzfirewall_maintainer"
 fi
 
 sudo bash /usr/local/turbolab.it/bash-fx/setup/the-end.sh ${SCRIPT_NAME}

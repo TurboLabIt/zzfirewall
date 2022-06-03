@@ -186,6 +186,7 @@ insertBeforeIpsetRules
 MSG="👐 whitelist ipset"
 fxTitle "$MSG"
 iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT
+bash "${SCRIPT_DIR}ddns/update.sh"
 
 fxTitle "🚪Insert ipset rules"
 addDropRule zzfw_Blacklist
