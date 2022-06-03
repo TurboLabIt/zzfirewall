@@ -19,7 +19,9 @@ fi
 
 
 fxTitle "🧹 Clear the log file..."
-IP_LOG_FILE=/var/log/zzfirewall.log
+LOG_DIR="/var/log/turbolab.it/"
+mkdir -p "${LOG_DIR}"
+IP_LOG_FILE=${LOG_DIR}zzfirewall.log
 date +"%Y-%m-%d %T" > "${IP_LOG_FILE}"
 
 fxTitle "📂 Creating a temp folder to download into..."

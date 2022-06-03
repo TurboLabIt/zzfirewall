@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
 echo ""
-bash "/usr/local/turbolab.it/zzfirewall/zzfirewall.sh" > "/var/log/zzfirewall_cron.log" 2>&1
+
+LOG_DIR="/var/log/turbolab.it/"
+mkdir -p "${LOG_DIR}"
+
+bash "/usr/local/turbolab.it/zzfirewall/zzfirewall.sh" > "${LOG_DIR}zzfirewall_cron.log" 2>&1
 
