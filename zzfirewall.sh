@@ -33,25 +33,30 @@ mkdir -p $DOWNLOADED_LIST_DIR
 fxTitle "⏬ Downloading combined IP white list..."
 IP_WHITELIST_FULLPATH=${DOWNLOADED_LIST_DIR}autogen-whitelist.txt
 curl -Lo "${IP_WHITELIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/whitelist.txt?$(date +%s)
+fxExitOnNonZero "$?"
 echo "" >> $IP_WHITELIST_FULLPATH
 
 fxTitle "⏬ Appending https://github.com/TurboLabIt/zzfirewall/blob/main/lists/whitelist.txt ..."
 curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/whitelist.txt?$(date +%s) >> $IP_WHITELIST_FULLPATH
+fxExitOnNonZero "$?"
 echo "" >> $IP_WHITELIST_FULLPATH
 
 fxTitle "⏬ Downloading combined IP black list..."
 IP_BLACKLIST_FULLPATH=${DOWNLOADED_LIST_DIR}autogen-blacklist.txt
 curl -Lo "${IP_BLACKLIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/blacklist.txt?$(date +%s)
+fxExitOnNonZero "$?"
 echo "" >> $IP_BLACKLIST_FULLPATH
 
 fxTitle "⏬ Appending https://github.com/TurboLabIt/zzfirewall/blob/main/lists/blacklist.txt ..."
 echo "## https://github.com/TurboLabIt/zzfirewall/blob/main/lists/blacklist.txt" >> $IP_BLACKLIST_FULLPATH
 curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/blacklist.txt?$(date +%s) >> $IP_BLACKLIST_FULLPATH
+fxExitOnNonZero "$?"
 echo "" >> $IP_BLACKLIST_FULLPATH
 
 fxTitle "⏬ Appending http://iplists.firehol.org/ ..."
 echo "## http://iplists.firehol.org/" >> $IP_BLACKLIST_FULLPATH
 curl https://raw.githubusercontent.com/ktsaou/blocklist-ipsets/master/firehol_level1.netset?$(date +%s) >> $IP_BLACKLIST_FULLPATH
+fxExitOnNonZero "$?"
 echo "" >> $IP_BLACKLIST_FULLPATH
 
 fxTitle "⏬ Appending https://github.com/stamparm/ipsum ..."
