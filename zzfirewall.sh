@@ -75,12 +75,73 @@ fxTitle "⏬ Downloading Russia IP list..."
 IP_BLACKLIST_RUSSIA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-russia.txt
 curl -Lo "${IP_BLACKLIST_RUSSIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/russia.txt?$(date +%s)
 
+function insertBeforeIpsetRules()
+{
+  fxTitle "🚪Insert pre-ipset rules"
+
+  MSG="🏡 Allow from loopback"
+  fxMessage "$MSG"
+  iptables -A INPUT -i lo -j ACCEPT -m comment --comment "$MSG (zzfw)"
+
+  MSG="🎅 Drop XMAS packets"
+  fxMessage "$MSG"
+  iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP -m comment --comment "$MSG (zzfw)"
+
+  MSG="💩 Drop null packets"
+  fxMessage "$MSG"
+  iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP -m comment --comment "$MSG (zzfw)"
+
+  MSG="📤 Allow EST,REL"
+  fxMessage "$MSG"
+  iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)"
+
+  MSG="🏡 Allow connections from LAN"
+  fxMessage "$MSG"
+  iptables -A INPUT -s 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+}
+
+
+function insertAfterIpsetRules()
+{
+  fxTitle "🚪Insert post-ipset rules"
+
+  MSG="🐧 Allow SSH"
+  fxMessage "$MSG"
+  iptables -A INPUT -p tcp -m multiport --dport 22,222 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+
+  MSG="📁 Allow FTP"
+  fxMessage "$MSG"
+  iptables -A INPUT -p tcp -m multiport --dport 20,21,990,2121:2221 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+
+  MSG="💌 Allow SMTP"
+  fxMessage "$MSG"
+  iptables -A INPUT -p tcp --dport 25 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+
+  MSG="🌎 Allow HTTP(s)"
+  fxMessage "$MSG"
+  iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+
+  MSG="📉 Allow monitor"
+  fxMessage "$MSG"
+  iptables -A INPUT -p tcp -m multiport --dport 5666 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+
+  MSG="🛑 Drop everything else"
+  fxMessage "$MSG"
+  iptables -A INPUT -j DROP -m comment --comment "$MSG (zzfw)"
+}
+
+
+bash ${SCRIPT_DIR}zzfirewall-reset.sh
+
+## the server must be protected while we build the ipsets
+insertBeforeIpsetRules
+insertAfterIpsetRules
+
 
 function createIpSet()
 {
   fxTitle "🧱 Building ipset $1 from file..."
-  ipset flush $1
-  ipset create $1 nethash -exist
+  ipset create $1 nethash
   while read -r line || [[ -n "$line" ]]; do
     local FIRSTCHAR="${line:0:1}"
     if [ "$FIRSTCHAR" != "#" ] && [ "$FIRSTCHAR" != "" ]; then
@@ -102,41 +163,22 @@ fxTitle "🧹 Delete the temp folder..."
 rm -rf $DOWNLOADED_LIST_DIR
 
 
-fxTitle "🧹 Reset iptables..."
-bash ${SCRIPT_DIR}zzfirewall-reset.sh
-
-fxTitle "🚪 Creating iptables rules..."
-
-MSG="🏡 Allow from loopback"
-fxMessage "$MSG"
-iptables -A INPUT -i lo -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
-
-MSG="🎅 Drop XMAS packets"
-fxMessage "$MSG"
-iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP -m comment --comment "$MSG (zzfw)" && fxOK
-
-MSG="💩 Drop null packets"
-fxMessage "$MSG"
-iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP -m comment --comment "$MSG (zzfw)" && fxOK
-
-MSG="📤 Allow EST,REL"
-fxMessage "$MSG"
-iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
-
-MSG="🏡 Allow connections from LAN"
-fxMessage "$MSG"
-iptables -A INPUT -s 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
-
-MSG="👐 whitelist ipset"
-fxMessage "$MSG"
-iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT && fxOK
-
 function addDropRule()
 {
   fxMessage "🛑 Enable ipset ${1}..."
-  iptables -A INPUT -m set --match-set ${1} src -j DROP && fxOK
+  iptables -A INPUT -m set --match-set ${1} src -j DROP
 }
 
+
+bash ${SCRIPT_DIR}zzfirewall-reset.sh light
+
+insertBeforeIpsetRules
+
+MSG="👐 whitelist ipset"
+fxTitle "$MSG"
+iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT
+
+fxTitle "🚪Insert ipset rules"
 addDropRule zzfw_Blacklist
 addDropRule zzfw_GeoArab
 addDropRule zzfw_GeoChina
@@ -144,29 +186,7 @@ addDropRule zzfw_GeoIndia
 addDropRule zzfw_GeoKorea
 addDropRule zzfw_GeoRussia
 
-MSG="🐧 Allow SSH"
-fxMessage "$MSG"
-iptables -A INPUT -p tcp -m multiport --dport 22,222 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
-
-MSG="📁 Allow FTP/FTPS"
-fxMessage "$MSG"
-iptables -A INPUT -p tcp -m multiport --dport 20,21,990,2121:2221 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
-
-MSG="💌 Allow SMTP"
-fxMessage "$MSG"
-iptables -A INPUT -p tcp --dport 25 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
-
-MSG="🌎 Allow HTTP(s)"
-fxMessage "$MSG"
-iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
-
-MSG="📉 Allow monitor"
-fxMessage "$MSG"
-iptables -A INPUT -p tcp -m multiport --dport 5666 -j ACCEPT -m comment --comment "$MSG (zzfw)" && fxOK
-
-MSG="🛑 Drop everything else"
-fxMessage "$MSG"
-iptables -A INPUT -j DROP -m comment --comment "$MSG (zzfw)" && fxOK
+insertAfterIpsetRules
 
 
 fxTitle "🍃 Looking for pure-ftpd..."
@@ -209,9 +229,10 @@ printIpSet zzfw_GeoKorea
 printIpSet zzfw_GeoRussia
 
 fxTitle "🧱 Current status"
-iptables -nvL
+iptables -nL
 
 fxTitle "Need the log?"
 fxMessage "nano ${IP_LOG_FILE}"
 
 fxEndFooter
+

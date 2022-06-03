@@ -9,32 +9,40 @@ else
   source <(curl -s https://raw.githubusercontent.com/TurboLabIt/bash-fx/main/bash-fx.sh)
 fi
 ## bash-fx is ready
+
 fxHeader "❤️‍🩹 FIREWALL RESET"
 rootCheck
 
-fxTitle "🧹 Removing ufw, iptables-persistent..."
-apt purge ufw iptables-persistent -y
+if [ "$1" = "light" ]; then
+  LIGHT_MODE=1
+else
+  LIGHT_MODE=0
+fi
+
+if [ "$LIGHT_MODE" = 0 ]; then
+  fxTitle "🧹 Removing ufw, iptables-persistent..."
+  apt purge ufw iptables-persistent -y
+fi
 
 fxTitle "🔄 Restoring iptables to default..."
-iptables -P INPUT ACCEPT
-iptables -P FORWARD ACCEPT
-iptables -P OUTPUT ACCEPT
-iptables -t nat -F
-iptables -t mangle -F
-iptables -F
-iptables -X
+iptables-save | awk '/^[*]/ { print $1 } 
+                     /^:[A-Z]+ [^-]/ { print $1 " ACCEPT" ; }
+                     /COMMIT/ { print $0; }' | iptables-restore
 
-fxTitle "🔄 Restoring iptables6 to default..."
-ip6tables -P INPUT ACCEPT
-ip6tables -P FORWARD ACCEPT
-ip6tables -P OUTPUT ACCEPT
-ip6tables -t nat -F
-ip6tables -t mangle -F
-ip6tables -F
-ip6tables -X
+
+if [ "$LIGHT_MODE" = 0 ]; then
+  fxTitle "🧹 Remove all ipsets..."
+  ipset flush
+  ipset destroy
+fi
 
 fxTitle "🧱 Current status"
-iptables -nvL
+iptables -nL
+
+if [ "$LIGHT_MODE" = 0 ]; then
+  echo ""
+  ipset list
+fi
 
 fxEndFooter
 
