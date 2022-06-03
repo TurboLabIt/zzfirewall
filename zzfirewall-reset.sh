@@ -31,6 +31,7 @@ iptables-save | awk '/^[*]/ { print $1 }
 
 
 if [ "$LIGHT_MODE" = 0 ]; then
+
   fxTitle "🧹 Remove all ipsets..."
   ipset flush
 
