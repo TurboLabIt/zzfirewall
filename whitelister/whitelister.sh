@@ -6,7 +6,17 @@ source "/usr/local/turbolab.it/bash-fx/bash-fx.sh"
 fxHeader "🛡️🧱 zzfirewall whitelister 🧱🛡️"
 rootCheck
 
-CHAIN_NAME="👔_ZZFW_LOCAL_WHITELIST"
+compgen -G "/etc/turbolab.it/zzfirewall-whitelist*" > /dev/null
+ONE_WHITELIST_EXISTS=$?
+
+if [ "$ONE_WHITELIST_EXISTS" != 0 ]; then
+
+  fxCatastrophicError "⚠️ No whitelist(s) found"
+  fxEndFooter failure
+  exit
+fi
+
+CHAIN_NAME="👔_ZZFW_WHITELISTER"
 CHAIN_REFERENCE_COMMENT="👔 (zzfw)"
 
 fxIptablesCreateChainIfNotExists "$CHAIN_NAME"
@@ -38,19 +48,24 @@ function addItem()
   if [[ "$ITEM" =~ [^0-9\.\/] ]]; then
     
     echo "Resolving..."
-    IP_ADDRESS=$(getent hosts $ITEM | awk '{ print $1 }')
+    local TIMESTAMP=$(date +"%F %T")
+    local IP_ADDRESS=$(getent hosts $ITEM | awk '{ print $1 }')
     if [ -z "$IP_ADDRESS" ]; then
       fxCatastrophicError "⚠️ Failed"
       return 255
     fi
+    
+   
+    local RULE_COMMENT="🪪 $ITEM || $TIMESTAMP"
   
   else
   
-    IP_ADDRESS=$ITEM
+    local IP_ADDRESS=$ITEM
+    local RULE_COMMENT="🧭 $ITEM"
   fi
  
  echo "Adding $IP_ADDRESS to the chain..." 
- iptables -I "$CHAIN_NAME" -s "$IP_ADDRESS" -j ACCEPT -m comment --comment "👔 $ITEM (zzfw)"
+ iptables -I "$CHAIN_NAME" -s "$IP_ADDRESS" -j ACCEPT -m comment --comment "$RULE_COMMENT (zzfw)"
 }
 
 
