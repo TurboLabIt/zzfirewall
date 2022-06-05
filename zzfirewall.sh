@@ -113,6 +113,11 @@ function insertBeforeIpsetRules()
 function insertAfterIpsetRules()
 {
   fxTitle "🚪Insert post-ipset rules"
+  
+  ## keep this as high as possible, so that we traverse less rules on access
+  MSG="🌎 Allow HTTP/HTTPS"
+  fxMessage "$MSG"
+  iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   MSG="🐧 Allow SSH"
   fxMessage "$MSG"
@@ -125,10 +130,6 @@ function insertAfterIpsetRules()
   MSG="💌 Allow SMTP"
   fxMessage "$MSG"
   iptables -A INPUT -p tcp --dport 25 -j ACCEPT -m comment --comment "$MSG (zzfw)"
-
-  MSG="🌎 Allow HTTP(s)"
-  fxMessage "$MSG"
-  iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   MSG="🛑 Drop everything else"
   fxMessage "$MSG"

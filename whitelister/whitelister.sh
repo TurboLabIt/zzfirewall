@@ -76,8 +76,8 @@ function addItem()
     local RULE_COMMENT="🧭 $ITEM"
   fi
  
- echo "Adding $IP_ADDRESS to the chain..."
- iptables -I "$CHAIN_NAME" -s "$IP_ADDRESS" -j ACCEPT -m comment --comment "$RULE_COMMENT (zzfw)"
+  echo "Adding $IP_ADDRESS to the chain..."
+  iptables -I "$CHAIN_NAME" -s "$IP_ADDRESS" -j ACCEPT -m comment --comment "$RULE_COMMENT (zzfw)"
 }
 
 
@@ -97,6 +97,32 @@ for WHITELIST_FILE in /etc/turbolab.it/zzfirewall-whitelist*
     done < "$WHITELIST_FILE"
     
   done
+  
+
+
+fxIptablesCheckEmptyChain "$CHAIN_NAME"
+EMPTY_WHITELISTER=$?
+LIMIT_SSH_TO_WHITELISTED=1
+
+if [ "$EMPTY_WHITELISTER" != 0 ]; then
+  fxCatastrophicError "⚠️⚠️ No whitelisted clients were added!"
+fi
+
+if [ "$EMPTY_WHITELISTER" != 0 ] && [ "$LIMIT_SSH_TO_WHITELISTED" = 1 ]; then
+
+  fxCatastrophicError "☠️ CANNOT RESTRICT SSH ACCESS BY ORIGIN! ☠️"
+  
+elif [ "$EMPTY_WHITELISTER" = 0 ] && [ "$LIMIT_SSH_TO_WHITELISTED" = 1 ] ; then
+
+  fxTitle "🛡️ Limiting SSH to whitelisted origins..."
+  MSG="🐧 Allow SSH"
+  iptables -D INPUT -p tcp --dport 22 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  
+elif [ "$EMPTY_WHITELISTER" = 0 ] && [ "$LIMIT_SSH_TO_WHITELISTED" = 0 ] ; then
+
+  fxTitle "❔ No SSH limit by origin requested via config"
+  
+fi
 
 
 fxTitle "🛡️ Current status"
