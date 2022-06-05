@@ -183,7 +183,6 @@ insertBeforeIpsetRules
 MSG="👐 whitelist ipset"
 fxTitle "$MSG"
 iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT
-bash "${SCRIPT_DIR}whitelister/whitelister.sh"
 
 fxTitle "🚪Insert ipset rules"
 addDropRule zzfw_Blacklist
@@ -194,6 +193,8 @@ addDropRule zzfw_GeoKorea
 addDropRule zzfw_GeoRussia
 
 insertAfterIpsetRules
+
+bash "${SCRIPT_DIR}whitelister/whitelister.sh"
 
 
 fxTitle "🍃 Looking for pure-ftpd..."
@@ -242,4 +243,3 @@ fxTitle "Need the log?"
 fxMessage "nano ${IP_LOG_FILE}"
 
 fxEndFooter
-
