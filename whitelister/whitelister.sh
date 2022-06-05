@@ -6,6 +6,7 @@ source "/usr/local/turbolab.it/bash-fx/bash-fx.sh"
 fxHeader "🛡️🧱 zzfirewall whitelister 🧱🛡️"
 rootCheck
 
+
 compgen -G "/etc/turbolab.it/zzfirewall-whitelist*" > /dev/null
 ONE_WHITELIST_EXISTS=$?
 
@@ -16,8 +17,19 @@ if [ "$ONE_WHITELIST_EXISTS" != 0 ]; then
   exit
 fi
 
+
+fxTitle "Testing domains resolution..."
+IP_ADDRESS=$(getent hosts "google.com" | awk '{ print $1 }')
+
+if [ -z "$IP_ADDRESS" ]; then
+  fxCatastrophicError "⚠️ DNS resolution failed"
+  fxEndFooter failure
+  exit
+fi
+
+
 CHAIN_NAME="👔_ZZFW_WHITELISTER"
-CHAIN_REFERENCE_COMMENT="👔 (zzfw)"
+CHAIN_REFERENCE_COMMENT="(zzfw)"
 
 fxIptablesCreateChainIfNotExists "$CHAIN_NAME"
 
@@ -64,7 +76,7 @@ function addItem()
     local RULE_COMMENT="🧭 $ITEM"
   fi
  
- echo "Adding $IP_ADDRESS to the chain..." 
+ echo "Adding $IP_ADDRESS to the chain..."
  iptables -I "$CHAIN_NAME" -s "$IP_ADDRESS" -j ACCEPT -m comment --comment "$RULE_COMMENT (zzfw)"
 }
 
