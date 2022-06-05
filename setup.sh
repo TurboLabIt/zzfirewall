@@ -25,6 +25,10 @@ if [ ! -f "/usr/local/bin/${SCRIPT_NAME}-generate" ]; then
   ln -s ${INSTALL_DIR}generators/generate-lists.sh /usr/local/bin/${SCRIPT_NAME}-generate
 fi
 
+if [ ! -f "/usr/local/bin/${SCRIPT_NAME}-whitelist-update" ]; then
+  ln -s ${INSTALL_DIR}whitelister/whitelister.sh /usr/local/bin/${SCRIPT_NAME}-whitelist-update
+fi
+
 ## Copy the cron job
 if [ ! -f "/etc/cron.d/zzfirewall" ]; then
   cp "${INSTALL_DIR}cron/cron" "/etc/cron.d/zzfirewall"
