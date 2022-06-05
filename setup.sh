@@ -30,10 +30,6 @@ if [ ! -f "/etc/cron.d/zzfirewall" ]; then
   cp "${INSTALL_DIR}cron/cron" "/etc/cron.d/zzfirewall"
 fi
 
-if [ ! -f "/etc/cron.d/zzfirewall_ddns_update" ]; then
-  cp "${INSTALL_DIR}ddns/cron" "/etc/cron.d/zzfirewall_ddns_update"
-fi
-
 if [ "$(hostname)" = "zane-boraso" ]; then
   cp "${INSTALL_DIR}generators/cron-maintainer" "/etc/cron.d/zzfirewall_maintainer"
 fi

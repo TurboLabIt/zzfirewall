@@ -3,7 +3,7 @@ echo ""
 
 SCRIPT_NAME=zzfirewall
 source "/usr/local/turbolab.it/bash-fx/bash-fx.sh"
-fxHeader "🛡️🧱 zzfirewall DDNS update 🧱🛡️"
+fxHeader "🛡️🧱 zzfirewall whitelister 🧱🛡️"
 rootCheck
 
 CHAIN_NAME="👔_ZZFW_LOCAL_WHITELIST"
@@ -54,10 +54,10 @@ function addItem()
 }
 
 
-for DDNS_FILE in /etc/turbolab.it/zzfirewall-ddns*
+for WHITELIST_FILE in /etc/turbolab.it/zzfirewall-whitelist*
   do
 
-    fxTitle "📋 ${DDNS_FILE}"
+    fxTitle "📋 ${WHITELIST_FILE}"
     
     while read -r line || [[ -n "$line" ]]; do
     
@@ -67,7 +67,7 @@ for DDNS_FILE in /etc/turbolab.it/zzfirewall-ddns*
         echo ""
       fi
       
-    done < "$DDNS_FILE"
+    done < "$WHITELIST_FILE"
     
   done
 
