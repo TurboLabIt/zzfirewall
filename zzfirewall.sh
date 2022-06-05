@@ -116,7 +116,7 @@ function insertAfterIpsetRules()
 
   MSG="🐧 Allow SSH"
   fxMessage "$MSG"
-  iptables -A INPUT -p tcp -m multiport --dport 22,222 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  iptables -A INPUT -p tcp --dport 22 -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   MSG="📁 Allow FTP"
   fxMessage "$MSG"
@@ -129,10 +129,6 @@ function insertAfterIpsetRules()
   MSG="🌎 Allow HTTP(s)"
   fxMessage "$MSG"
   iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
-
-  MSG="📉 Allow monitor"
-  fxMessage "$MSG"
-  iptables -A INPUT -p tcp -m multiport --dport 5666 -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   MSG="🛑 Drop everything else"
   fxMessage "$MSG"
@@ -186,7 +182,7 @@ insertBeforeIpsetRules
 MSG="👐 whitelist ipset"
 fxTitle "$MSG"
 iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT
-bash "${SCRIPT_DIR}ddns/update.sh"
+bash "${SCRIPT_DIR}whitelister/whitelister.sh"
 
 fxTitle "🚪Insert ipset rules"
 addDropRule zzfw_Blacklist
