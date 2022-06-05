@@ -21,7 +21,7 @@ if [ ! -f "/usr/local/bin/${SCRIPT_NAME}-reset" ]; then
   ln -s ${INSTALL_DIR}${SCRIPT_NAME}-reset.sh /usr/local/bin/${SCRIPT_NAME}-reset
 fi
 
-if [ ! -f "/usr/local/bin/${SCRIPT_NAME}-generate" ]; then
+if [ "$(hostname)" = "zane-boraso" ] && [ ! -f "/usr/local/bin/${SCRIPT_NAME}-generate" ]; then
   ln -s ${INSTALL_DIR}generators/generate-lists.sh /usr/local/bin/${SCRIPT_NAME}-generate
 fi
 
