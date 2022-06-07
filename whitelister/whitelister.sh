@@ -17,6 +17,9 @@ if [ "$ONE_WHITELIST_EXISTS" != 0 ]; then
   exit
 fi
 
+if [ -z "$(command -v dig)" ]; then
+  sudo apt update && sudo apt install dnsutils -y
+fi
 
 fxTitle "Testing domains resolution..."
 IP_ADDRESS=$(dig +short @8.8.8.8 google.com | tail -1)
