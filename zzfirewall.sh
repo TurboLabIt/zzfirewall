@@ -196,9 +196,12 @@ bash ${SCRIPT_DIR}zzfirewall-reset.sh light
 
 insertBeforeIpsetRules
 
-MSG="👐 whitelist ipset"
-fxTitle "$MSG"
-iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT
+if [ "${ALLOW_WEBSERVER}" != 0 ]; then
+
+  MSG="👐 whitelist ipset"
+  fxTitle "$MSG"
+  iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT
+fi
 
 fxTitle "🚪Insert ipset rules"
 addDropRule zzfw_Blacklist
