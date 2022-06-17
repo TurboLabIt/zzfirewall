@@ -4,6 +4,7 @@ echo ""
 source "/usr/local/turbolab.it/bash-fx/bash-fx.sh"
 fxHeader "🛡️🧱 zzfirewall 🧱🛡️"
 rootCheck
+fxConfigLoader
 
 fxTitle "📦 Checking packages...."
 if [ -z "$(command -v curl)" ] || [ -z "$(command -v iptables)" ] || [ -z "$(command -v ipset)" ]; then
