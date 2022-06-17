@@ -142,6 +142,10 @@ function insertAfterIpsetRules()
     iptables -A INPUT -p tcp --dport 25 -j ACCEPT -m comment --comment "$MSG (zzfw)"
     
   fi
+  
+  if [ ! -z "${PRE_DROP_SCRIPT}" ]; then
+    echo "$PRE_DROP_SCRIPT"
+  fi
 
   MSG="🛑 Drop everything else"
   fxMessage "$MSG"
