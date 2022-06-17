@@ -115,21 +115,33 @@ function insertAfterIpsetRules()
   fxTitle "🚪Insert post-ipset rules"
   
   ## keep this as high as possible, so that we traverse less rules on access
-  MSG="🌎 Allow HTTP/HTTPS"
-  fxMessage "$MSG"
-  iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  if [ "${ALLOW_WEBSERVER}" != 0 ]; then
+  
+    MSG="🌎 Allow HTTP/HTTPS"
+    fxMessage "$MSG"
+    iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+    
+  fi
 
   MSG="🐧 Allow SSH"
   fxMessage "$MSG"
   iptables -A INPUT -p tcp --dport 22 -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
-  MSG="📁 Allow FTP"
-  fxMessage "$MSG"
-  iptables -A INPUT -p tcp -m multiport --dport 20,21,990,2121:2221 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  if [ "${ALLOW_FTP}" != 0 ]; then
 
-  MSG="💌 Allow SMTP"
-  fxMessage "$MSG"
-  iptables -A INPUT -p tcp --dport 25 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+    MSG="📁 Allow FTP"
+    fxMessage "$MSG"
+    iptables -A INPUT -p tcp -m multiport --dport 20,21,990,2121:2221 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+    
+  fi
+
+  if [ "${ALLOW_SMTP}" != 0 ]; then
+  
+    MSG="💌 Allow SMTP"
+    fxMessage "$MSG"
+    iptables -A INPUT -p tcp --dport 25 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+    
+  fi
 
   MSG="🛑 Drop everything else"
   fxMessage "$MSG"
