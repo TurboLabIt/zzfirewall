@@ -145,7 +145,8 @@ function insertAfterIpsetRules()
   fi
   
   if [ ! -z "${PRE_DROP_SCRIPT}" ]; then
-    echo "$PRE_DROP_SCRIPT"
+    fxMessage "💨 Running ${PRE_DROP_SCRIPT}..."
+    bash "$PRE_DROP_SCRIPT"
   fi
 
   MSG="🛑 Drop everything else"
