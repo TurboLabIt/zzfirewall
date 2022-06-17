@@ -2,7 +2,7 @@
 echo ""
 
 source "/usr/local/turbolab.it/bash-fx/bash-fx.sh"
-fxHeader "🛡️🧱 zzfirewall 🧱🛡️"
+fxHeader "🔥🧱 zzfirewall 🧱🔥"
 rootCheck
 fxConfigLoader
 
