@@ -145,12 +145,12 @@ function insertAfterIpsetRules()
   fi
   
   if [ ! -z "${PRE_DROP_SCRIPT}" ]; then
-    fxMessage "💨 Running ${PRE_DROP_SCRIPT}..."
+    fxTitle "💨 Running ${PRE_DROP_SCRIPT}..."
     bash "$PRE_DROP_SCRIPT"
   fi
 
   MSG="🛑 Drop everything else"
-  fxMessage "$MSG"
+  fxTitle "$MSG"
   iptables -A INPUT -j DROP -m comment --comment "$MSG (zzfw)"
 }
 
