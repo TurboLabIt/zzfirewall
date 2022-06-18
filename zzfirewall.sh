@@ -264,3 +264,4 @@ fxTitle "Need the log?"
 fxMessage "nano ${IP_LOG_FILE}"
 
 fxEndFooter
+
