@@ -148,6 +148,10 @@ function insertAfterIpsetRules()
     fxTitle "💨 Running ${PRE_DROP_SCRIPT}..."
     bash "$PRE_DROP_SCRIPT"
   fi
+  
+  MSG="🏓 Allow ICMP (ping)"
+  fxMessage "$MSG"
+  iptables -A INPUT -p icmp -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   MSG="🛑 Drop everything else"
   fxTitle "$MSG"
