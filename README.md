@@ -24,12 +24,14 @@ sudo cp /usr/local/turbolab.it/zzfirewall/zzfirewall.default.conf /etc/turbolab.
 
 ````bash
 sudo zzfirewall
+
 ````
 
-Need a factory-reset?
+# Emergency firewall reset
 
 ````bash
 sudo zzfirewall-reset
+
 ````
 
 
@@ -37,5 +39,6 @@ sudo zzfirewall-reset
 
 ````bash
 sudo zzfirewall-generate
+
 ````
 
