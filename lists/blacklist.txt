@@ -125,3 +125,7 @@
 ## Russian spammer on turbolab.it/forum
 46.161.0.0/16
 
+## OVH Canada request flood
+# https://www.ipaddress.com/ipv4/149.56.16.76
+# https://www.abuseipdb.com/check/149.56.16.76
+149.56.16.76
