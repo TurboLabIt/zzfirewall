@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 echo ""
 
+SCRIPT_NAME=zzfirewall
 source "/usr/local/turbolab.it/bash-fx/bash-fx.sh"
 fxHeader "🛡️ Generate black, white lists"
 rootCheck
+fxConfigLoader
+
 
 fxTitle "🤝 Generate whitelist..."
 echo ""
@@ -14,6 +17,24 @@ fxTitle "🧱 Generate blacklist..."
 echo ""
 XDEBUG_MODE=off php ${SCRIPT_DIR}generate-blacklist.php
 echo ""
+
+fxTitle "🧱 Adding abuseipdb to the blacklist..."
+ABUSE_IP=$(curl -G https://api.abuseipdb.com/api/v2/blacklist \
+  -d limit=500000 \
+  -d confidenceMinimum=70 \
+  -d plaintext \
+  -H "Key: ${ABUSEIPDB_KEY}" \
+  -H "Accept: application/json")
+
+CURL_RESULT=$?
+
+if [[ "$ABUSE_IP" == *"error"* ]] || [ -z "${ABUSE_IP}" ] || [ "${CURL_RESULT}" != 0 ]; then
+  fxCatastrophicError "${ABUSE_IP}"
+fi
+
+echo "" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
+echo "## 🛑 AbuseIPDB" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
+echo "$ABUSE_IP" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
 
 fxTitle "✔️ Git commit..."
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/whitelist.txt
