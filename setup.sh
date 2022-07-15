@@ -20,10 +20,6 @@ if [ ! -f "/etc/cron.d/zzfirewall" ]; then
   cp "${INSTALL_DIR}cron/cron" "/etc/cron.d/zzfirewall"
 fi
 
-if [ ! -f "/usr/local/bin/${SCRIPT_NAME}-whitelist-update" ]; then
-  ln -s ${INSTALL_DIR}whitelister/whitelister.sh /usr/local/bin/${SCRIPT_NAME}-whitelist-update
-fi
-
 ## maintainer stuff
 if [ "$(hostname)" = "zane-boraso" ]; then
   fxLinkBin ${INSTALL_DIR}generators/generate-lists.sh ${SCRIPT_NAME}-generate
