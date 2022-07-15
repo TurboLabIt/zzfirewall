@@ -30,7 +30,7 @@ iptables-save | awk '/^[*]/ { print $1 }
                      /COMMIT/ { print $0; }' | iptables-restore
 
 
-if [ "$LIGHT_MODE" = 0 ]; then
+if [ "$LIGHT_MODE" = 0 ] && [ ! -z "$(command -v ipset)" ]; then
 
   fxTitle "🧹 Remove all ipsets..."
   ipset flush
@@ -51,10 +51,9 @@ fi
 fxTitle "🧱 Current status"
 iptables -nL
 
-if [ "$LIGHT_MODE" = 0 ]; then
+if [ "$LIGHT_MODE" = 0 ] && [ ! -z "$(command -v ipset)" ]; then
   echo ""
   ipset list
 fi
 
 fxEndFooter
-
