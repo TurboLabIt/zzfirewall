@@ -15,7 +15,6 @@ fxLinkBin ${INSTALL_DIR}${SCRIPT_NAME}.sh
 fxLinkBin ${INSTALL_DIR}${SCRIPT_NAME}-reset.sh
 fxLinkBin ${INSTALL_DIR}whitelister/whitelister.sh ${SCRIPT_NAME}-whitelist-update
 
-## Copy the cron job
 if [ ! -f "/etc/cron.d/zzfirewall" ]; then
   cp "${INSTALL_DIR}cron/cron" "/etc/cron.d/zzfirewall"
 fi
