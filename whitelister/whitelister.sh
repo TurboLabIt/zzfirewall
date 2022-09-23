@@ -67,7 +67,7 @@ function addItem()
     local IP_ADDRESS=$(dig +short @8.8.8.8 "$ITEM" | tail -1)
 
     if [ -z "$IP_ADDRESS" ]; then
-      #fxCatastrophicError "⚠️ Failed"
+      fxCatastrophicError "⚠️ Failed" "proceed"
       return 255
     fi
    
