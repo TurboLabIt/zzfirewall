@@ -1,1 +1,9 @@
 ## 👐 This is the static whitelist from https://github.com/TurboLabIt/zzfirewall/blob/main/lists/whitelist.txt
+
+## PayPal
+# https://www.paypal.com/us/smarthelp/article/what-are-the-ip-addresses-for-live-paypal-servers-ts1056
+173.0.80.0/20
+64.4.240.0/21
+64.4.248.0/22
+66.211.168.0/22
+91.243.72.0/23
