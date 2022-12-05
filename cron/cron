@@ -9,4 +9,8 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 50 12 * * * root bash "/usr/local/turbolab.it/zzfirewall/cron/cron.sh" > /dev/null 2>&1 
 
 ## Periodically allow from local whitelist (IPs and DDNS)
-*/3 * * * * root bash "/usr/local/turbolab.it/zzfirewall/whitelister/cron.sh" > /dev/null 2>&1 
+*/3 * * * * root bash "/usr/local/turbolab.it/zzfirewall/whitelister/cron.sh" > /dev/null 2>&1
+
+
+## 👇🏻 If the last entry is missing a newline, cron will consider it broken and refuse to run it 👇🏻
+
