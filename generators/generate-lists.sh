@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
-echo ""
 
 SCRIPT_NAME=zzfirewall
-source "/usr/local/turbolab.it/bash-fx/bash-fx.sh"
-fxHeader "🛡️ Generate black, white lists"
+## https://github.com/TurboLabIt/webstackup/blob/master/script/base.sh
+source "/usr/local/turbolab.it/webstackup/script/base.sh"
+fxHeader "🛡️ Generate Geo+Black+White lists"
 rootCheck
 fxConfigLoader
 
+fxTitle "🗺 Generate geolist..."
+echo ""
+XDEBUG_MODE=off php ${SCRIPT_DIR}generate-geolists.php ${MAXMIND_KEY}
+echo ""
 
 fxTitle "🤝 Generate whitelist..."
 echo ""
@@ -47,4 +51,3 @@ git -C ${SCRIPT_DIR}../ pull --no-edit
 git -C ${SCRIPT_DIR}../ push
 
 fxEndFooter
-
