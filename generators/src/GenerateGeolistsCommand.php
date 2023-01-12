@@ -288,7 +288,7 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
           $txtData .= PHP_EOL;
         }
 
-        $path = __DIR__ . '/../../lists/autogen/' . $fileName;
+        $path = __DIR__ . '/../../lists/autogen/geos/' . $fileName;
         file_put_contents($path, $txtData);
 
         $progressBar->advance();
