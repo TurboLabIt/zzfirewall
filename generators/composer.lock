@@ -1107,7 +1107,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-basecommand.git",
-                "reference": "0ba2496f7f5c91528c882b5e32bc3ccff612de82"
+                "reference": "509a09dcd55baa8ae0fc39f0dbf317c13cc22bc3"
             },
             "require": {
                 "php": "^8.2",
@@ -1135,7 +1135,7 @@
                 }
             ],
             "description": "A minimal Symfony bundle to build your own CLI commands even faster",
-            "time": "2023-01-11T20:36:07+00:00"
+            "time": "2023-01-12T09:02:57+00:00"
         }
     ],
     "packages-dev": [],

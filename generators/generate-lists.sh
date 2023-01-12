@@ -6,9 +6,12 @@ source "/usr/local/turbolab.it/webstackup/script/base.sh"
 fxHeader "🛡️ Generate Geo+Black+White lists"
 rootCheck
 fxConfigLoader
+EXPECTED_USER=root
+
 
 fxTitle "🗺 Generate geolist..."
 echo ""
+wsuComposer install
 XDEBUG_MODE=off php ${SCRIPT_DIR}generate-geolists.php ${MAXMIND_KEY}
 echo ""
 

@@ -19,8 +19,7 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
     const MAXMIND_DB_DOWNLOAD_URL_KEY_PLACEHOLDER = 'YOUR_LICENSE_KEY';
     const MAXMIND_DB_DOWNLOAD_URL = 
       'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key=YOUR_LICENSE_KEY&suffix=zip';
-    
-    const DIR_WORK = '/tmp/zzfirewall-generate-geolists/';
+    const MAXMIND_DB_LOCAL_FILENAME = 'maxmind.zip';
 
     const REMOTE_ZIP_ROOT_DIR_STARTS_WITH = 'GeoLite2-Country-CSV';
     const CSV_IP_NAME   = 'GeoLite2-Country-Blocks-IPv4.csv';
@@ -39,7 +38,7 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       "AE"  => "arab.txt"
     ];
 
-    // https://github.com/TurboLabIt/php-symfony-basecommand/blob/main/src/Traits/CliOptionsTrait.php
+    // 💡 https://github.com/TurboLabIt/php-symfony-basecommand/blob/main/src/Traits/CliOptionsTrait.php
     protected bool $allowDryRunOpt = true;
 
     protected array $arrIp      = [];
@@ -65,28 +64,21 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
         parent::execute($input, $output);
 
         $this
+          ->fxTitle("Setting up the temp dir...")
+          ->deleteWorkingDir()
+          ->fxOK()
+
           ->fxTitle("Downloading...")
-          ->downloadGeoIPFile();
+          ->downloadGeoIPFile()
 
-        $this->fxOK("File downloaded in ##" . $this->getGeoIPZipPath() . "##");
-
-        $this
           ->fxTitle("Unzipping...")
-          ->unzipGeoIPFile();
+          ->unzipGeoIPFile()
 
-        $this->fxOK("File unzipped in ##" . $this->getCsvDirPath() . "##");
-
-        $this
           ->fxTitle("Loading IP CSV...")
-          ->loadIpCsv();
+          ->loadIpCsv()
 
-        $this->fxOK("CSV loaded. ##" . number_format(count($this->arrIp), 0, ',', '.') . "## item(s)");
-
-        $this
           ->fxTitle("Loading Country CSV...")
           ->loadCountryCsv();
-
-        $this->fxOK("CSV loaded. ##" . number_format(count($this->arrCountry), 0, ',', '.') . "## item(s)");
         
         return $this->endWithSuccess();
     }
@@ -106,34 +98,27 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       $response = $httpClient->request('GET', $downloadUrl);
       $zipData  = $response->getContent();
 
-      $zipPath = $this->getGeoIPZipPath();
+      $zipPath = $this->getTempWorkingDirFile(static::MAXMIND_DB_LOCAL_FILENAME);
       file_put_contents($zipPath, $zipData);
+
+      $this->fxOK("File downloaded in ##" . $this->getTempWorkingDirFile(static::MAXMIND_DB_LOCAL_FILENAME) . "##");
 
       return $this;
     }
 
 
-    protected function getGeoIPZipPath() : string
-    {
-      if( !is_dir(static::DIR_WORK) ) {
-        mkdir(static::DIR_WORK);
-      }
-
-      $zipPath = static::DIR_WORK . 'maxmind.zip';
-      return $zipPath;
-    }
-
-
     protected function unzipGeoIPFile() : self
     {
-      $zipPath = $this->getGeoIPZipPath();
+      $zipPath = $this->getTempWorkingDirFile(static::MAXMIND_DB_LOCAL_FILENAME);
 
       $oZip = new \ZipArchive();
       $oZip->open($zipPath);
-      $oZip->extractTo(static::DIR_WORK);
+      $oZip->extractTo( $this->getTempWorkingDirPath() );
       $oZip->close();
 
       unlink($zipPath);
+
+      $this->fxOK("File unzipped in ##" . $this->getCsvDirPath() . "##");
 
       return $this;
     }
@@ -148,6 +133,8 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
           static::GEONAME_ID  => $arrRow[static::GEONAME_ID]
         ];
       });
+
+      $this->fxOK("CSV loaded. ##" . number_format(count($this->arrIp), 0, ',', '.') . "## item(s)");
 
       return $this;
     }
@@ -172,6 +159,8 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
           static::FILEMAP_NAME  => static::COUNTRY_FILEMAP[$code]
         ];
       });
+
+      $this->fxOK("CSV loaded. ##" . number_format(count($this->arrCountry), 0, ',', '.') . "## item(s)");
 
       return $this;
     }
@@ -206,10 +195,10 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
 
     protected function getCsvDirPath() : string
     {
-      $arrFiles = scandir(static::DIR_WORK);
+      $arrFiles = scandir( $this->getTempWorkingDirPath() );
       foreach($arrFiles as $fileName) {
 
-        $fullPath = static::DIR_WORK . $fileName . DIRECTORY_SEPARATOR;
+        $fullPath = $this->getTempWorkingDirFile($fileName) . DIRECTORY_SEPARATOR;
 
         if( !is_dir($fullPath) || stripos($fileName, static::REMOTE_ZIP_ROOT_DIR_STARTS_WITH) !== 0 ) {
           continue;
