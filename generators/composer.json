@@ -12,9 +12,7 @@
     ],
     "require": {
         "turbolabit/php-symfony-basecommand": "dev-main",
-        "symfony/console": "^6.2",
-        "symfony/http-client": "^6.2",
-        "league/csv": "^9.8"
+        "symfony/http-client": "@stable"
     },
     "repositories": {
         "TurboLabIt/BaseCommand": {

@@ -7,22 +7,22 @@ fxHeader "🛡️ Generate Geo+Black+White lists"
 rootCheck
 fxConfigLoader
 EXPECTED_USER=root
-
+showPHPVer
 
 fxTitle "🗺 Generate geolist..."
 echo ""
 wsuComposer install
-XDEBUG_MODE=off php ${SCRIPT_DIR}generate-geolists.php ${MAXMIND_KEY}
+XDEBUG_MODE=off ${PHP_CLI} ${SCRIPT_DIR}generate-geolists.php ${MAXMIND_KEY}
 echo ""
 
 fxTitle "🤝 Generate whitelist..."
 echo ""
-XDEBUG_MODE=off php ${SCRIPT_DIR}generate-whitelist.php
+XDEBUG_MODE=off ${PHP_CLI} ${SCRIPT_DIR}generate-whitelist.php
 echo ""
 
 fxTitle "🧱 Generate blacklist..."
 echo ""
-XDEBUG_MODE=off php ${SCRIPT_DIR}generate-blacklist.php
+XDEBUG_MODE=off ${PHP_CLI} ${SCRIPT_DIR}generate-blacklist.php
 echo ""
 
 fxTitle "🧱 Adding abuseipdb to the blacklist..."

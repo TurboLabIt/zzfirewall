@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "62b2632acadb14742a5b3298549850d5",
+    "content-hash": "9b499a1386234ff0ebfb16e7ee10fe64",
     "packages": [
         {
             "name": "league/csv",
@@ -1107,15 +1107,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TurboLabIt/php-symfony-basecommand.git",
-                "reference": "c4f3a8f16a9e43ff776088143aa0a04052b4e214"
+                "reference": "446d2ad987ef9790387c9950431dd5f7c4c69294"
             },
             "require": {
+                "league/csv": "@stable",
                 "php": "^8.2",
-                "symfony/console": "^6.2",
-                "symfony/lock": "^6.2"
+                "symfony/console": "@stable",
+                "symfony/lock": "@stable"
             },
             "require-dev": {
-                "phpunit/phpunit": "^9.5"
+                "phpunit/phpunit": "@stable"
             },
             "default-branch": true,
             "type": "library",
@@ -1135,14 +1136,15 @@
                 }
             ],
             "description": "A minimal Symfony bundle to build your own CLI commands even faster",
-            "time": "2023-01-12T19:37:02+00:00"
+            "time": "2023-01-13T08:58:49+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "turbolabit/php-symfony-basecommand": 20
+        "turbolabit/php-symfony-basecommand": 20,
+        "symfony/http-client": 0
     },
     "prefer-stable": false,
     "prefer-lowest": false,

@@ -39,11 +39,12 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
     ];
 
     // 💡 https://github.com/TurboLabIt/php-symfony-basecommand/blob/main/src/Traits/CliOptionsTrait.php
-    protected bool $allowDryRunOpt = true;
+    protected bool $allowDryRunOpt      = true;
+    protected bool $allowNoDownloadOpt  = true;
 
-    protected array $arrIp      = [];
-    protected array $arrCountry = [];
-    protected array $arrFilesToWrite = [];
+    protected array $arrIp              = [];
+    protected array $arrCountry         = [];
+    protected array $arrFilesToWrite    = [];
 
     
     public function __construct(array $arrConfig = [])
@@ -67,7 +68,6 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
         $this
           ->fxTitle("Setting up the temp dir...")
           ->deleteWorkingDir()
-          ->fxOK()
 
           ->fxTitle("Downloading...")
           ->downloadGeoIPFile()
@@ -103,6 +103,11 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       );
 
       $this->fxInfo("Downloading from ##" . $downloadUrl . "##");
+
+      if( !$this->isDownloadAllowed() ) {
+        return $this;
+      }
+
       $response = $httpClient->request('GET', $downloadUrl);
       $zipData  = $response->getContent();
 
@@ -124,8 +129,6 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       $oZip->extractTo( $this->getTempWorkingDirPath() );
       $oZip->close();
 
-      unlink($zipPath);
-
       $this->fxOK("File unzipped in ##" . $this->getCsvDirPath() . "##");
 
       return $this;
@@ -134,15 +137,14 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
 
     protected function loadIpCsv() : self
     {
+      $csvFilePath = $this->getCsvDirPath() . static::CSV_IP_NAME;
       $me = $this;
-      $this->processCsv(static::CSV_IP_NAME, function($arrRow) use($me) {
+      $this->processCsv($csvFilePath, function($arrRow) use($me) {
         $me->arrIp[] = [
           static::IP_NETWORK  => $arrRow[static::IP_NETWORK],
           static::GEONAME_ID  => $arrRow[static::GEONAME_ID]
         ];
       });
-
-      $this->fxOK("CSV loaded. ##" . number_format(count($this->arrIp), 0, ',', '.') . "## item(s)");
 
       return $this;
     }
@@ -150,8 +152,9 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
 
     protected function loadCountryCsv() : self
     {
+      $csvFilePath = $this->getCsvDirPath() . static::CSV_GEO_NAME;
       $me = $this;
-      $this->processCsv(static::CSV_GEO_NAME, function($arrRow) use($me) {
+      $this->processCsv($csvFilePath, function($arrRow) use($me) {
 
         $name = $arrRow[static::COUNTRY_NAME];
         $code = $arrRow[static::COUNTRY_CODE];
@@ -168,36 +171,7 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
         ];
       });
 
-      $this->fxOK("CSV loaded. ##" . number_format(count($this->arrCountry), 0, ',', '.') . "## item(s)");
-
       return $this;
-    }
-
-
-    protected function processCsv(string $csvName, callable $fxProcess)
-    {
-      $csvFilePath = $this->getCsvDirPath() . $csvName;
-      $this->fxInfo("##" . $csvFilePath . "##");
-
-      $csvFile = Reader::createFromPath($csvFilePath);
-      $csvFile->setDelimiter(',');
-      $csvFile->setHeaderOffset(0);
-      $oCsvData = $csvFile->getRecords();
-
-      $this->fxInfo("This may take a while...");
-      $this->io->newLine();
-
-      $progressBar = new ProgressBar($this->output, count($csvFile));
-      $progressBar->start();
-
-      foreach($oCsvData as $arrRow) {
-
-        $fxProcess($arrRow);
-        $progressBar->advance();
-      }
-
-      $progressBar->finish();
-      $this->io->newLine(2);
     }
 
 
@@ -289,7 +263,10 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
         }
 
         $path = __DIR__ . '/../../lists/geos/' . $fileName;
-        file_put_contents($path, $txtData);
+
+        if( $this->isNotDryRun() ) {
+          file_put_contents($path, $txtData);
+        }
 
         $progressBar->advance();
       }
