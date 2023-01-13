@@ -32,10 +32,42 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
     const FILEMAP_NAME  = 'filename';
 
     const COUNTRY_FILEMAP = [
+      // Yemen
+      "YE"  => "arab.txt",
+      // Iraq
+      "IQ"  => "arab.txt",
+      // Saudi Arabia
+      "SA"  => "arab.txt",
+      // Iran
+      "IR"  => "arab.txt",
+      // Syria
+      "SY"  => "arab.txt",
+      // Armenia
+      "AM"  => "arab.txt",
+      // Jordan
+      "JO"  => "arab.txt",
+      // Lebanon
+      "LB"  => "arab.txt",
+      // Kuwait
+      "KW"  => "arab.txt",
+      // Oman
+      "OM"  => "arab.txt",
+      // Qatar
+      "QA"  => "arab.txt",
+      // Bahrain
+      "BH"  => "arab.txt",
+      // United Arab Emirates
+      "AE"  => "arab.txt",
       // Turkey
       "TR"  => "arab.txt",
-      // United Arab Emirates
-      "AE"  => "arab.txt"
+      // Azerbaijan
+      "AZ"  => "arab.txt",
+      // Afghanistan
+      "AF"  => "arab.txt",
+      // Pakistan
+      "PK"  => "arab.txt",
+      // Afghanistan
+      "AF"  => "arab.txt",
     ];
 
     // 💡 https://github.com/TurboLabIt/php-symfony-basecommand/blob/main/src/Traits/CliOptionsTrait.php
@@ -261,6 +293,8 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
 
           $txtData .= PHP_EOL;
         }
+
+        $txtData = trim($txtData) . PHP_EOL;
 
         $path = __DIR__ . '/../../lists/geos/' . $fileName;
 
