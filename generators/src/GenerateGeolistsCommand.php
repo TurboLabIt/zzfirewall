@@ -32,42 +32,42 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
     const FILEMAP_NAME  = 'filename';
 
     const COUNTRY_FILEMAP = [
-      // Yemen
-      "YE"  => "arab.txt",
-      // Iraq
-      "IQ"  => "arab.txt",
-      // Saudi Arabia
-      "SA"  => "arab.txt",
-      // Iran
-      "IR"  => "arab.txt",
-      // Syria
-      "SY"  => "arab.txt",
-      // Armenia
-      "AM"  => "arab.txt",
-      // Jordan
-      "JO"  => "arab.txt",
-      // Lebanon
-      "LB"  => "arab.txt",
-      // Kuwait
-      "KW"  => "arab.txt",
-      // Oman
-      "OM"  => "arab.txt",
-      // Qatar
-      "QA"  => "arab.txt",
-      // Bahrain
-      "BH"  => "arab.txt",
-      // United Arab Emirates
-      "AE"  => "arab.txt",
-      // Turkey
-      "TR"  => "arab.txt",
-      // Azerbaijan
-      "AZ"  => "arab.txt",
-      // Afghanistan
-      "AF"  => "arab.txt",
-      // Pakistan
-      "PK"  => "arab.txt",
-      // Afghanistan
-      "AF"  => "arab.txt",
+
+      // === ARAB.TXT ===
+      // Yemen, Iraq, Saudi Arabia
+      "YE" => "arab.txt", "IQ" => "arab.txt", "SA" => "arab.txt",
+      // Iran, Syria, Armenia
+      "IR" => "arab.txt", "SY" => "arab.txt", "AM" => "arab.txt",
+      // Jordan, Lebanon, Kuwait
+      "JO" => "arab.txt", "LB" => "arab.txt", "KW" => "arab.txt",
+      // Oman, Qatar, Bahrain
+      "OM" => "arab.txt", "QA" => "arab.txt", "BH" => "arab.txt",
+      // United Arab Emirates, Turkey, Azerbaijan
+      "AE" => "arab.txt", "TR" => "arab.txt", "AZ" => "arab.txt",
+      // Afghanistan, Pakistan, Palestine
+      "AF" => "arab.txt", "PK" => "arab.txt", "PS" => "arab.txt",
+
+      // === CHINA.TXT ===
+      // China, Laos, Mongolia
+      "CN" => "china.txt", "LA" => "china.txt", "MN" => "china.txt",
+      // Bhutan, Vietnam, Thailand
+      "BT" => "china.txt", "VN" => "china.txt", "TH" => "china.txt",
+
+      // === INDIA.TXT ===
+      // Bangladesh, Sri Lanka, India
+      "BD" => "india.txt", "LK" => "india.txt", "IN" => "india.txt",
+      // Nepal, Indonesia, Cambodia
+      "NP" => "india.txt", "ID" => "india.txt", "KH" => "india.txt",
+
+      // === KOREA.TXT ===
+      // South Korea, North Korea
+      "KR" => "korea.txt", "KP" => "korea.txt",
+
+      // === RUSSIA.TXT ===
+      // Uzbekistan, Kazakhstan, Kyrgyzstan,
+      "UZ" => "russia.txt", "KZ" => "russia.txt", "KG" => "russia.txt",
+      // Russia
+      "RU" => "russia.txt", "" => "russia.txt", "" => "russia.txt",
     ];
 
     // 💡 https://github.com/TurboLabIt/php-symfony-basecommand/blob/main/src/Traits/CliOptionsTrait.php
