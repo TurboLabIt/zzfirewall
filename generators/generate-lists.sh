@@ -6,12 +6,19 @@ source "/usr/local/turbolab.it/webstackup/script/base.sh"
 fxHeader "🛡️ Generate Geo+Black+White lists"
 rootCheck
 fxConfigLoader
-EXPECTED_USER=root
 showPHPVer
+
+fxTitle "📂 Setting up the vendor directory for composer..."
+EXPECTED_USER=zane
+VENDOR_DIR=/usr/local/turbolab.it/zzfirewall/generators/vendor/
+mkdir -p "${VENDOR_DIR}"
+chown zane:zane "${VENDOR_DIR}" -R
+chmod ugo= "${VENDOR_DIR}" -R
+chmod u=rwX "${VENDOR_DIR}" -R
+wsuComposer install
 
 fxTitle "🗺 Generate geolist..."
 echo ""
-wsuComposer install
 XDEBUG_MODE=off ${PHP_CLI} ${SCRIPT_DIR}generate-geolists.php ${MAXMIND_KEY}
 echo ""
 
