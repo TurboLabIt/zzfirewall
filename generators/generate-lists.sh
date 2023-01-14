@@ -15,6 +15,7 @@ mkdir -p "${VENDOR_DIR}"
 chown zane:zane "${VENDOR_DIR}" -R
 chmod ugo= "${VENDOR_DIR}" -R
 chmod u=rwX "${VENDOR_DIR}" -R
+COMPOSER_JSON_FULLPATH=/usr/local/turbolab.it/zzfirewall/generators/composer.json
 wsuComposer install
 
 fxTitle "🗺 Generate geolist..."
