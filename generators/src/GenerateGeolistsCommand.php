@@ -67,7 +67,7 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       // Uzbekistan, Kazakhstan, Kyrgyzstan,
       "UZ" => "russia.txt", "KZ" => "russia.txt", "KG" => "russia.txt",
       // Russia
-      "RU" => "russia.txt", "" => "russia.txt", "" => "russia.txt",
+      "RU" => "russia.txt"
     ];
 
     // 💡 https://github.com/TurboLabIt/php-symfony-basecommand/blob/main/src/Traits/CliOptionsTrait.php
