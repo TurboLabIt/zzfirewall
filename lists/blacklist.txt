@@ -133,3 +133,7 @@
 ## Contact us mail boming
 # https://www.abuseipdb.com/check/67.223.119.190
 67.223.119.190
+
+## Forum flooding on /feed/ (via okhttp)
+54.212.8.0/24
+54.215.21.0/24
