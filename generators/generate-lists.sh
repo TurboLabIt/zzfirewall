@@ -39,7 +39,7 @@ fxTitle "🗺 Generate geolist..."
 echo ""
 ${PHP_CLI} ${SCRIPT_DIR}generate-geolists.php ${MAXMIND_KEY}
 echo ""
-exit
+
 fxTitle "🤝 Generate whitelist..."
 echo ""
 XDEBUG_MODE=off ${PHP_CLI} ${SCRIPT_DIR}generate-whitelist.php
