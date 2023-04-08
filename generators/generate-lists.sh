@@ -8,6 +8,22 @@ rootCheck
 fxConfigLoader
 showPHPVer
 
+fxTitle "🔧 Checking maintainer keys..."
+KEY_NOT_SET_TIP="Set it in sudo nano /etc/turbolab.it/zzfirewall.conf , see https://github.com/TurboLabIt/zzfirewall/blob/main/zzfirewall.default.conf"
+
+if [ -z "${ABUSEIPDB_KEY}" ]; then
+  fxCatastrophicError "ABUSEIPDB_KEY is not set! ${KEY_NOT_SET_TIP}"
+fi
+
+fxOK "ABUSEIPDB_KEY is set"
+
+if [ -z "${MAXMIND_KEY}" ]; then
+  fxCatastrophicError "MAXMIND_KEY is not set! ${KEY_NOT_SET_TIP}"
+fi
+
+fxOK "MAXMIND_KEY is set"
+
+
 fxTitle "📂 Setting up the vendor directory for composer..."
 EXPECTED_USER=zane
 VENDOR_DIR=/usr/local/turbolab.it/zzfirewall/generators/vendor/
@@ -18,11 +34,12 @@ chmod u=rwX "${VENDOR_DIR}" -R
 COMPOSER_JSON_FULLPATH=/usr/local/turbolab.it/zzfirewall/generators/composer.json
 wsuComposer install
 
+
 fxTitle "🗺 Generate geolist..."
 echo ""
-XDEBUG_MODE=off ${PHP_CLI} ${SCRIPT_DIR}generate-geolists.php ${MAXMIND_KEY}
+${PHP_CLI} ${SCRIPT_DIR}generate-geolists.php ${MAXMIND_KEY}
 echo ""
-
+exit
 fxTitle "🤝 Generate whitelist..."
 echo ""
 XDEBUG_MODE=off ${PHP_CLI} ${SCRIPT_DIR}generate-whitelist.php
