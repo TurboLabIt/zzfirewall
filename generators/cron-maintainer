@@ -1,0 +1,9 @@
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+## zzfirewall maintainer routine
+# note: the user cron runs at https://github.com/TurboLabIt/zzfirewall/blob/main/cron/cron
+30 10 * * * root bash "/usr/local/turbolab.it/zzfirewall/generators/cron-maintainer.sh" > /dev/null 2>&1
+
+
+## 👇 If the last entry is missing a newline, cron will consider it broken and refuse to run it 👇
