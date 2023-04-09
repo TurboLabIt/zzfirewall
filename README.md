@@ -41,4 +41,3 @@ sudo zzfirewall-reset
 sudo zzfirewall-generate
 
 ````
-
