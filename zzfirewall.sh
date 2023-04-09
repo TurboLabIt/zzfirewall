@@ -34,7 +34,7 @@ mkdir -p $DOWNLOADED_LIST_DIR
 
 fxTitle "🤝 Disable nf_conntrack_tcp_loose"
 ## https://serverfault.com/a/1128235
-if [ "${DISABLE_TCP_LOOSE_CONN}" ]; then
+if [ "${DISABLE_TCP_LOOSE_CONN}" != 0 ]; then
   sysctl -w net.netfilter.nf_conntrack_tcp_loose=0
 else
   fxInfo "Disabled in config, skipping"
