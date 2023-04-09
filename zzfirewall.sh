@@ -25,10 +25,20 @@ mkdir -p "${LOG_DIR}"
 IP_LOG_FILE=${LOG_DIR}zzfirewall.log
 date +"%Y-%m-%d %T" > "${IP_LOG_FILE}"
 
+
 fxTitle "📂 Creating a temp folder to download into..."
 DOWNLOADED_LIST_DIR=/tmp/zzfirewall/
 rm -rf $DOWNLOADED_LIST_DIR
 mkdir -p $DOWNLOADED_LIST_DIR
+
+
+fxTitle "🤝 Disable nf_conntrack_tcp_loose"
+## https://serverfault.com/a/1128235
+if [ "${DISABLE_TCP_LOOSE_CONN}" ]; then
+  sysctl -w net.netfilter.nf_conntrack_tcp_loose=0
+else
+  fxInfo "Disabled in config, skipping"
+fi
 
 
 fxTitle "⏬ Downloading combined IP white list..."
