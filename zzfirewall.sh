@@ -124,9 +124,12 @@ function insertBeforeIpsetRules()
   fxMessage "$MSG"
   iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
-  MSG="🏡 Allow connections from LAN"
-  fxMessage "$MSG"
-  iptables -A INPUT -s 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  if [ "${ALLOW_FROM_LAN}" = 1 ]; then
+
+    MSG="🏡 Allow connections from LAN"
+    fxMessage "$MSG"
+    iptables -A INPUT -s 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  fi
 }
 
 
