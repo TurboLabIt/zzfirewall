@@ -120,10 +120,6 @@ function insertBeforeIpsetRules()
   fxMessage "$MSG"
   iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP -m comment --comment "$MSG (zzfw)"
 
-  MSG="📤 Allow EST,REL"
-  fxMessage "$MSG"
-  iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)"
-
   if [ "${ALLOW_FROM_LAN}" = 1 ]; then
 
     MSG="🏡 Allow connections from LAN"
@@ -136,6 +132,11 @@ function insertBeforeIpsetRules()
 function insertAfterIpsetRules()
 {
   fxTitle "🚪Insert post-ipset rules"
+
+  ## https://serverfault.com/q/1128226/188704
+  MSG="📤 Allow EST,REL"
+  fxMessage "$MSG"
+  iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)"
   
   ## keep this as high as possible, so that we traverse less rules on access
   if [ "${ALLOW_WEBSERVER}" != 0 ]; then
@@ -221,12 +222,9 @@ bash ${SCRIPT_DIR}zzfirewall-reset.sh light
 
 insertBeforeIpsetRules
 
-if [ "${ALLOW_WEBSERVER}" != 0 ]; then
-
-  MSG="👐 whitelist ipset"
-  fxTitle "$MSG"
-  iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT
-fi
+MSG="👐 whitelist ipset"
+fxTitle "$MSG"
+iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT
 
 
 fxTitle "🚪Insert ipset rules"
@@ -308,4 +306,3 @@ fxTitle "Need the log?"
 fxMessage "nano ${IP_LOG_FILE}"
 
 fxEndFooter
-
