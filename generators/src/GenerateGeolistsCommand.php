@@ -64,8 +64,10 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       "KR" => "korea.txt", "KP" => "korea.txt",
 
       // === RUSSIA.TXT ===
-      // Uzbekistan, Kazakhstan, Kyrgyzstan,
+      // Uzbekistan, Kazakhstan, Kyrgyzstan
       "UZ" => "russia.txt", "KZ" => "russia.txt", "KG" => "russia.txt",
+      // Latvia
+      "LV" => "russia.txt",
       // Russia
       "RU" => "russia.txt"
     ];
