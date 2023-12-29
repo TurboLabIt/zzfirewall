@@ -15,7 +15,7 @@ use League\Csv\Reader;
 class GenerateGeolistsCommand extends AbstractBaseCommand
 {
     const CLI_ARG_MAXMIND_KEY = "maxmind-key";
-    
+
     const MAXMIND_DB_DOWNLOAD_URL_KEY_PLACEHOLDER = 'YOUR_LICENSE_KEY';
     const MAXMIND_DB_DOWNLOAD_URL = 
       'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key=YOUR_LICENSE_KEY&suffix=zip';
@@ -52,6 +52,8 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       "CN" => "china.txt", "LA" => "china.txt", "MN" => "china.txt",
       // Bhutan, Vietnam, Thailand
       "BT" => "china.txt", "VN" => "china.txt", "TH" => "china.txt",
+      // Singapore
+      "SG" => "china.txt",
 
       // === INDIA.TXT ===
       // Bangladesh, Sri Lanka, India
@@ -80,7 +82,7 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
     protected array $arrCountry         = [];
     protected array $arrFilesToWrite    = [];
 
-    
+
     public function __construct(array $arrConfig = [])
     {
         parent::__construct($arrConfig);
@@ -121,7 +123,7 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
           ->fxTitle("Writing each file...")
           ->writeFileMap()
         ;
-        
+
         return $this->endWithSuccess();
     }
 
