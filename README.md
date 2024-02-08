@@ -27,6 +27,17 @@ sudo zzfirewall
 
 ````
 
+
+# Restrict SSH access
+
+If you want to limit SSH access to pre-approved hosts, create a file and add your IPs/DDNS (one per line):
+
+````bash
+sudo nano /etc/turbolab.it/zzfirewall-whitelist.conf && zzfirewall-whitelist-update
+
+````
+
+
 # Emergency firewall reset
 
 ````bash
