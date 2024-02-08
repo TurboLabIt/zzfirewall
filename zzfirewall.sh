@@ -154,7 +154,20 @@ function insertAfterIpsetRules()
     MSG="🌎 Allow HTTP/HTTPS"
     fxMessage "$MSG"
     iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
-    
+  fi
+
+  if [ "${ALLOW_SECURE_IMAP}" != 0 ]; then
+
+    MSG="📧 Allow secure IMAP over TLS/SSL"
+    fxMessage "$MSG"
+    iptables -A INPUT -p tcp -m multiport --dport 993 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  fi
+
+  if [ "${ALLOW_SECURE_POP3}" != 0 ]; then
+
+    MSG="📧 Allow secure POP3 over TLS/SSL"
+    fxMessage "$MSG"
+    iptables -A INPUT -p tcp -m multiport --dport 995 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
 
   MSG="🐧 Allow SSH"
@@ -166,7 +179,6 @@ function insertAfterIpsetRules()
     MSG="📁 Allow FTP"
     fxMessage "$MSG"
     iptables -A INPUT -p tcp -m multiport --dport 20,21,990,2121:2221 -j ACCEPT -m comment --comment "$MSG (zzfw)"
-    
   fi
 
   if [ "${ALLOW_SMTP}" != 0 ]; then
@@ -174,10 +186,10 @@ function insertAfterIpsetRules()
     MSG="💌 Allow SMTP"
     fxMessage "$MSG"
     iptables -A INPUT -p tcp --dport 25 -j ACCEPT -m comment --comment "$MSG (zzfw)"
-    
   fi
   
   if [ ! -z "${PRE_DROP_SCRIPT}" ]; then
+  
     fxTitle "💨 Running ${PRE_DROP_SCRIPT}..."
     bash "$PRE_DROP_SCRIPT"
   fi
@@ -237,7 +249,6 @@ if [ "${ALLOW_WEBSERVER}" != 0 ]; then
   MSG="👐 whitelist ipset"
   fxTitle "$MSG"
   iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT
-
 fi
 
 fxTitle "🚪Insert ipset rules"
@@ -279,7 +290,6 @@ if [ -d /etc/pure-ftpd/conf/ ]; then
   else
   
     curl -o "/etc/pure-ftpd/conf/PassivePortRange" https://raw.githubusercontent.com/TurboLabIt/webstackup/master/config/pure-ftpd/PassivePortRange?$(date +%s)
-    
   fi
   
   ls -la /etc/pure-ftpd/conf/
