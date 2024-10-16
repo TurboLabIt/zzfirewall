@@ -9,6 +9,38 @@ $txtBlacklist .= PHP_EOL . '## See: https://github.com/TurboLabIt/zzfirewall/';
 
 
 /**
+ * Deny from Google Cloud
+ * ======================
+ */
+const GOOGLE_BLACKLIST_URL = 'https://www.gstatic.com/ipranges/cloud.json';
+echo "⚙️ Adding from Google Cloud " . GOOGLE_BLACKLIST_URL . "..." . PHP_EOL;
+$txtBlacklist .= PHP_EOL . PHP_EOL . '## Deny from Google Cloud - ' . GOOGLE_BLACKLIST_URL . PHP_EOL;
+$txtGoogle = file_get_contents(GOOGLE_BLACKLIST_URL);
+
+if($txtGoogle === false) {
+    die("⚠️ Download from " . GOOGLE_BLACKLIST_URL . " FAILED! Aborting!");
+}
+
+$arrGoogle = json_decode($txtGoogle);
+
+if( !is_object($arrGoogle) ) {
+    die("⚠️ json_decode from " . GOOGLE_BLACKLIST_URL . " FAILED! Aborting!");
+}
+
+$txtGoogle = "";
+foreach($arrGoogle->prefixes as $oneItem) {
+
+    if( empty($oneItem->ipv4Prefix) ) {
+        continue;
+    }
+
+    $txtGoogle .= $oneItem->ipv4Prefix . PHP_EOL;
+}
+
+$txtBlacklist .= $txtGoogle;
+
+
+/**
  * Writing the file...
  * ===================
  */
