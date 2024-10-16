@@ -67,7 +67,7 @@ fi
 echo "" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
 echo "## 🛑 AbuseIPDB" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
 echo "$ABUSE_IP" | grep -v ":" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
-exit
+
 fxTitle "✔️ Git commit..."
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/whitelist.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/google.txt
