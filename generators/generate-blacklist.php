@@ -14,7 +14,7 @@ $txtBlacklist .= PHP_EOL . '## See: https://github.com/TurboLabIt/zzfirewall/';
  */
 const GOOGLE_BLACKLIST_URL = 'https://www.gstatic.com/ipranges/cloud.json';
 echo "⚙️ Adding from Google Cloud " . GOOGLE_BLACKLIST_URL . "..." . PHP_EOL;
-$txtBlacklist .= PHP_EOL . PHP_EOL . '## Deny from Google Cloud - ' . GOOGLE_BLACKLIST_URL . PHP_EOL;
+$txtBlacklist .= PHP_EOL . PHP_EOL . '## 🛑 Deny from Google Cloud - ' . GOOGLE_BLACKLIST_URL . PHP_EOL;
 $txtGoogle = file_get_contents(GOOGLE_BLACKLIST_URL);
 
 if($txtGoogle === false) {
