@@ -81,16 +81,13 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
     protected array $arrFilesToWrite    = [];
 
 
-    public function __construct(array $arrConfig = [])
-    {
-        parent::__construct($arrConfig);
-    }
-
-
-    protected function configure()
+    protected function configure() : void
     {
         parent::configure();
-        $this->addArgument(static::CLI_ARG_MAXMIND_KEY, InputArgument::REQUIRED, 'The MaxMind key to use for API access to the GeoIP database');
+        $this->addArgument(
+            static::CLI_ARG_MAXMIND_KEY, InputArgument::REQUIRED,
+            'The MaxMind key to use for API access to the GeoIP database'
+        );
     }
 
 
