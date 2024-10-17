@@ -23,12 +23,15 @@ fi
 
 fxOK "MAXMIND_KEY is set"
 
+fxTitle "↙️ Git pulling..."
+git -C "/usr/local/turbolab.it/zzfirewall/" pull
+
 
 fxTitle "📂 Setting up the vendor directory for composer..."
-EXPECTED_USER=zane
+EXPECTED_USER=$(logname)
 VENDOR_DIR=/usr/local/turbolab.it/zzfirewall/generators/vendor/
 mkdir -p "${VENDOR_DIR}"
-chown zane:zane "${VENDOR_DIR}" -R
+chown $(logname):$(logname) "${VENDOR_DIR}" -R
 chmod ugo= "${VENDOR_DIR}" -R
 chmod u=rwX "${VENDOR_DIR}" -R
 COMPOSER_JSON_FULLPATH=/usr/local/turbolab.it/zzfirewall/generators/composer.json

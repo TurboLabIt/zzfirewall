@@ -1,6 +1,5 @@
 <?php
-use TurboLabIt\ZzfirewallGenerators\GenerateGeolistsCommand;
-use TurboLabIt\PhpSymfonyBasecommand\Command\AbstractBaseCommand;
+use TurboLabIt\zzfirewall\GenerateGeolistsCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 

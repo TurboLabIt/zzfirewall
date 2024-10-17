@@ -1,9 +1,10 @@
-SHELL=/bin/bash
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
+SHELL=/bin/bash
+MAILTO=''
+LOG_FILE=/var/log/turbolab.it/zfirewall_cron-
 
-## zzfirewall maintainer routine
-# note: the user cron runs at https://github.com/TurboLabIt/zzfirewall/blob/main/cron/cron
-30 10 * * * root bash "/usr/local/turbolab.it/zzfirewall/generators/cron-maintainer.sh" > /dev/null 2>&1
+
+30 10 * * * root bash /usr/local/turbolab.it/zzfirewall/generators/generate-lists.sh > ${LOG_DIR}generate-lists.sh.log 2>&1
 
 
 ## 👇 If the last entry is missing a newline, cron will consider it broken and refuse to run it 👇

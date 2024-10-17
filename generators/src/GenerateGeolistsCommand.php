@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-namespace TurboLabIt\ZzfirewallGenerators;
+namespace TurboLabIt\zzfirewall;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;

@@ -2,22 +2,11 @@
     "name": "turbolabit/zzfirewall-generators",
     "autoload": {
         "psr-4": {
-            "TurboLabIt\\ZzfirewallGenerators\\": "src/"
+            "TurboLabIt\\zzfirewall\\": "src/"
         }
     },
-    "authors": [
-        {
-            "name": "Zane di TurboLab.it"
-        }
-    ],
     "require": {
         "turbolabit/php-symfony-basecommand": "dev-main",
         "symfony/http-client": "@stable"
-    },
-    "repositories": {
-        "TurboLabIt/BaseCommand": {
-            "type": "git",
-            "url": "https://github.com/TurboLabIt/php-symfony-basecommand.git"
-        }
     }
 }
