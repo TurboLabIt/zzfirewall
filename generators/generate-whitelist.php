@@ -9,12 +9,13 @@ $txtWhitelist .= PHP_EOL . '## See: https://github.com/TurboLabIt/zzfirewall/';
 
 
 /**
- * Allow connections from Google...
- * ================================
+ * Allow connections from GoogleBot...
+ * ===================================
  */
-const GOOGLE_WHITELIST_URL = 'https://www.gstatic.com/ipranges/goog.json';
+// https://developers.google.com/search/docs/crawling-indexing/verifying-googlebot
+const GOOGLE_WHITELIST_URL = 'https://developers.google.com/static/search/apis/ipranges/googlebot.json';
 echo "⚙️ Adding from Google " . GOOGLE_WHITELIST_URL . "..." . PHP_EOL;
-$txtWhitelist .= PHP_EOL . PHP_EOL . '## 🔎 Allow from Google - ' . GOOGLE_WHITELIST_URL . PHP_EOL;
+$txtWhitelist .= PHP_EOL . PHP_EOL . '## 🔎 Allow from GoogleBot - ' . GOOGLE_WHITELIST_URL . PHP_EOL;
 $txtGoogle = file_get_contents(GOOGLE_WHITELIST_URL);
 
 if($txtGoogle === false) {
