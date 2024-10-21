@@ -136,17 +136,18 @@ function insertBeforeIpsetRules()
     fxMessage "$MSG"
     iptables -A INPUT -s 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
+
+  ## https://serverfault.com/q/1128226/188704
+  # Keep this before the blocklists, otherwise the system can't connect out to blocked addresses (e.g.: Google Cloud)
+  MSG="📤 Allow EST,REL"
+  fxMessage "$MSG"
+  iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)"
 }
 
 
 function insertAfterIpsetRules()
 {
   fxTitle "🚪Insert post-ipset rules"
-
-  ## https://serverfault.com/q/1128226/188704
-  MSG="📤 Allow EST,REL"
-  fxMessage "$MSG"
-  iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)"
   
   ## keep this as high as possible, so that we traverse less rules on access
   if [ "${ALLOW_WEBSERVER}" != 0 ]; then
