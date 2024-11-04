@@ -40,6 +40,24 @@ foreach($arrGoogle->prefixes as $oneItem) {
 
 $txtWhitelist .= $txtGoogle;
 
+
+/**
+ * Allow connections from Uptimerobot...
+ * ===================================
+ */
+// https://uptimerobot.com/help/locations/
+const UPTIMEROBOT_WHITELIST_URL = 'https://uptimerobot.com/inc/files/ips/IPv4.txt';
+echo "⚙️ Adding from Uptimerobot " . UPTIMEROBOT_WHITELIST_URL . "..." . PHP_EOL;
+$txtWhitelist .= PHP_EOL . PHP_EOL . '## 🔎 Allow from UptimerobotBot - ' . UPTIMEROBOT_WHITELIST_URL . PHP_EOL;
+$txtUptimerobot = file_get_contents(UPTIMEROBOT_WHITELIST_URL);
+
+if($txtUptimerobot === false) {
+    die("⚠️ Download from " . UPTIMEROBOT_WHITELIST_URL . " FAILED! Aborting!");
+}
+
+$txtWhitelist .= $txtUptimerobot;
+
+
 /**
  * Writing the file...
  * ===================
@@ -55,4 +73,3 @@ echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
 file_put_contents($filePath, $txtGoogle);
 
 echo PHP_EOL . "✅ " . basename(__FILE__, '.php') . " is DONE" . PHP_EOL;
-
