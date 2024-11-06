@@ -72,6 +72,7 @@ echo "## 🛑 AbuseIPDB" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
 echo "$ABUSE_IP" | grep -v ":" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
 
 fxTitle "✔️ Git commit..."
+sed -i 's/\r$//' ${SCRIPT_DIR}../lists/autogen/whitelist.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/whitelist.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/google.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/google-cloud.txt
