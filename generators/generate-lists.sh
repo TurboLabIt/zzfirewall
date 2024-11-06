@@ -74,6 +74,7 @@ echo "$ABUSE_IP" | grep -v ":" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
 fxTitle "✔️ Git commit..."
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/whitelist.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/google.txt
+git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/google-cloud.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/blacklist.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/geos/arab.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/geos/china.txt

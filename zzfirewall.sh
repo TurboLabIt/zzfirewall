@@ -74,6 +74,15 @@ fxTitle "⏬ Appending https://github.com/stamparm/ipsum ..."
 echo "## https://github.com/stamparm/ipsum" >> $IP_BLACKLIST_FULLPATH
 curl --compressed https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt?$(date +%s) 2>/dev/null | grep -v "#" | grep -v -E "\s[1-2]$" | cut -f 1 >> $IP_BLACKLIST_FULLPATH
 
+if [ "${ALLOW_GOOGLE_CLOUD}" != 1 ]; then
+
+  fxTitle "⏬ Appending Google Cloud IP list..."
+  echo "## https://github.com/TurboLabIt/zzfirewall/blob/main/lists/autogen/google-cloud.txt" >> $IP_BLACKLIST_FULLPATH
+  curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/refs/heads/main/lists/autogen/google-cloud.txt?$(date +%s) >> $IP_BLACKLIST_FULLPATH
+  fxExitOnNonZero "$?"
+  echo "" >> $IP_BLACKLIST_FULLPATH
+fi
+
 if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_ARAB} != 0 ]; then
 
   fxTitle "⏬ Downloading Arab IP list..."

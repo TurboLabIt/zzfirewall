@@ -1,8 +1,4 @@
 zzfirewall.conf
 .vscode/
 generators/vendor/
-/.idea/.gitignore
-/.idea/modules.xml
-/.idea/php.xml
-/.idea/vcs.xml
-/.idea/zzfirewall.iml
+.idea/
