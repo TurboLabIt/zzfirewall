@@ -5,6 +5,7 @@ SCRIPT_NAME=zzfirewall
 source "/usr/local/turbolab.it/bash-fx/bash-fx.sh"
 fxHeader "🛡️🧱 zzfirewall whitelister 🧱🛡️"
 rootCheck
+fxConfigLoader
 
 
 compgen -G "/etc/turbolab.it/zzfirewall-whitelist*" > /dev/null
