@@ -101,12 +101,10 @@ for WHITELIST_FILE in /etc/turbolab.it/zzfirewall-whitelist*
     done < "$WHITELIST_FILE"
     
   done
-  
 
 
 fxIptablesCheckEmptyChain "$CHAIN_NAME"
 EMPTY_WHITELISTER=$?
-LIMIT_SSH_TO_WHITELISTED=1
 
 if [ "$EMPTY_WHITELISTER" != 0 ]; then
   fxCatastrophicError "⚠️⚠️ No whitelisted clients were added!"
