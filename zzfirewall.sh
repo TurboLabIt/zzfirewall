@@ -228,7 +228,7 @@ function createIpSet()
   fi 
 
   fxTitle "🧱 Building ipset $1 from file..."
-  ipset create $1 nethash -exist
+  ipset create $1 nethash -exist hashsize 32768 maxelem 200000
   while read -r line || [[ -n "$line" ]]; do
     local FIRSTCHAR="${line:0:1}"
     if [ "$FIRSTCHAR" != "#" ] && [ "$FIRSTCHAR" != "" ]; then
