@@ -291,6 +291,7 @@ addDropRule zzfw_GeoChina "${GEOBLOCK_CHINA}"
 addDropRule zzfw_GeoIndia "${GEOBLOCK_INDIA}"
 addDropRule zzfw_GeoKorea "${GEOBLOCK_KOREA}"
 addDropRule zzfw_GeoRussia "${GEOBLOCK_RUSSIA}"
+addDropRule zzfw_GeoSouthAmerica "${GEOBLOCK_SOUTH_AMERICA}"
 
 insertAfterIpsetRules
 
@@ -336,11 +337,14 @@ function printIpSet()
   echo "...."
 }
 
+
 printIpSet zzfw_GeoArab "${GEOBLOCK_ARAB}"
 printIpSet zzfw_GeoChina "${GEOBLOCK_CHINA}"
 printIpSet zzfw_GeoIndia "${GEOBLOCK_INDIA}"
 printIpSet zzfw_GeoKorea "${GEOBLOCK_KOREA}"
 printIpSet zzfw_GeoRussia "${GEOBLOCK_RUSSIA}"
+printIpSet zzfw_GeoSouthAmerica "${GEOBLOCK_SOUTH_AMERICA}"
+
 
 fxTitle "🧱 Current status"
 iptables -nL
