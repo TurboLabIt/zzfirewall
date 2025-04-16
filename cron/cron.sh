@@ -14,4 +14,3 @@ bash "/usr/local/turbolab.it/zzfirewall/zzfirewall.sh" > "${LOG_FILE}" 2>&1
 
 fxTitle "${LOG_FILE}"
 cat ${LOG_FILE}
-

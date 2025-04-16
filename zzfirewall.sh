@@ -85,7 +85,7 @@ fi
 
 if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_ARAB} != 0 ]; then
 
-  fxTitle "⏬ Downloading Arab IP list..."
+  fxTitle "⏬ Downloading 🇦🇪 Arab IP list..."
   IP_BLACKLIST_ARAB_FULLPATH=${DOWNLOADED_LIST_DIR}geos-arab.txt
   curl -Lo "${IP_BLACKLIST_ARAB_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/arab.txt?$(date +%s)
 fi
@@ -93,7 +93,7 @@ fi
 
 if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_CHINA} != 0 ]; then
 
-  fxTitle "⏬ Downloading China IP list..."
+  fxTitle "⏬ Downloading 🇨🇳 China IP list..."
   IP_BLACKLIST_CHINA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-china.txt
   curl -Lo "${IP_BLACKLIST_CHINA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/china.txt?$(date +%s)
 fi
@@ -101,7 +101,7 @@ fi
 
 if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_INDIA} != 0 ]; then
 
-  fxTitle "⏬ Downloading India IP list..."
+  fxTitle "⏬ Downloading 🇮🇳 India IP list..."
   IP_BLACKLIST_INDIA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-india.txt
   curl -Lo "${IP_BLACKLIST_INDIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/india.txt?$(date +%s)
 fi
@@ -109,7 +109,7 @@ fi
 
 if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_KOREA} != 0 ]; then
 
-  fxTitle "⏬ Downloading Korea IP list..."
+  fxTitle "⏬ Downloading 🇰🇷 Korea IP list..."
   IP_BLACKLIST_KOREA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-korea.txt
   curl -Lo "${IP_BLACKLIST_KOREA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/korea.txt?$(date +%s)
 fi
@@ -117,9 +117,17 @@ fi
 
 if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_RUSSIA} != 0 ]; then
 
-  fxTitle "⏬ Downloading Russia IP list..."
+  fxTitle "⏬ Downloading 🇷🇺 Russia IP list..."
   IP_BLACKLIST_RUSSIA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-russia.txt
   curl -Lo "${IP_BLACKLIST_RUSSIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/russia.txt?$(date +%s)
+fi
+
+
+if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_SOUTH_AMERICA} != 0 ]; then
+
+  fxTitle "⏬ Downloading 🇧🇷 South America IP list..."
+  IP_BLACKLIST_SOUTH_AMERICA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-south-america.txt
+  curl -Lo "${IP_BLACKLIST_SOUTH_AMERICA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/south-america?$(date +%s)
 fi
 
 
@@ -246,6 +254,8 @@ createIpSet zzfw_GeoChina "$IP_BLACKLIST_CHINA_FULLPATH"
 createIpSet zzfw_GeoIndia "$IP_BLACKLIST_INDIA_FULLPATH"
 createIpSet zzfw_GeoKorea "$IP_BLACKLIST_KOREA_FULLPATH"
 createIpSet zzfw_GeoRussia "$IP_BLACKLIST_RUSSIA_FULLPATH"
+createIpSet zzfw_GeoSouthAmerica "$IP_BLACKLIST_IP_BLACKLIST_SOUTH_AMERICA_FULLPATH"
+
 
 fxTitle "🧹 Delete the temp folder..."
 rm -rf $DOWNLOADED_LIST_DIR
