@@ -43,42 +43,42 @@ fi
 
 fxTitle "⏬ Downloading combined IP white list..."
 IP_WHITELIST_FULLPATH=${DOWNLOADED_LIST_DIR}autogen-whitelist.txt
-curl -Lo "${IP_WHITELIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/whitelist.txt?$(date +%s)
+curl -Lo "${IP_WHITELIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/whitelist.txt
 fxExitOnNonZero "$?"
 echo "" >> $IP_WHITELIST_FULLPATH
 
 fxTitle "⏬ Appending https://github.com/TurboLabIt/zzfirewall/blob/main/lists/whitelist.txt ..."
-curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/whitelist.txt?$(date +%s) >> $IP_WHITELIST_FULLPATH
+curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/whitelist.txt >> $IP_WHITELIST_FULLPATH
 fxExitOnNonZero "$?"
 echo "" >> $IP_WHITELIST_FULLPATH
 
 fxTitle "⏬ Downloading combined IP blacklist..."
 IP_BLACKLIST_FULLPATH=${DOWNLOADED_LIST_DIR}autogen-blacklist.txt
-curl -Lo "${IP_BLACKLIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/blacklist.txt?$(date +%s)
+curl -Lo "${IP_BLACKLIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/blacklist.txt
 fxExitOnNonZero "$?"
 echo "" >> $IP_BLACKLIST_FULLPATH
 
 fxTitle "⏬ Appending https://github.com/TurboLabIt/zzfirewall/blob/main/lists/blacklist.txt ..."
 echo "## https://github.com/TurboLabIt/zzfirewall/blob/main/lists/blacklist.txt" >> $IP_BLACKLIST_FULLPATH
-curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/blacklist.txt?$(date +%s) >> $IP_BLACKLIST_FULLPATH
+curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/blacklist.txt >> $IP_BLACKLIST_FULLPATH
 fxExitOnNonZero "$?"
 echo "" >> $IP_BLACKLIST_FULLPATH
 
 fxTitle "⏬ Appending http://iplists.firehol.org/ ..."
 echo "## http://iplists.firehol.org/" >> $IP_BLACKLIST_FULLPATH
-curl https://raw.githubusercontent.com/ktsaou/blocklist-ipsets/master/firehol_level1.netset?$(date +%s) >> $IP_BLACKLIST_FULLPATH
+curl https://raw.githubusercontent.com/ktsaou/blocklist-ipsets/master/firehol_level1.netset >> $IP_BLACKLIST_FULLPATH
 fxExitOnNonZero "$?"
 echo "" >> $IP_BLACKLIST_FULLPATH
 
 fxTitle "⏬ Appending https://github.com/stamparm/ipsum ..."
 echo "## https://github.com/stamparm/ipsum" >> $IP_BLACKLIST_FULLPATH
-curl --compressed https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt?$(date +%s) 2>/dev/null | grep -v "#" | grep -v -E "\s[1-2]$" | cut -f 1 >> $IP_BLACKLIST_FULLPATH
+curl --compressed https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt 2>/dev/null | grep -v "#" | grep -v -E "\s[1-2]$" | cut -f 1 >> $IP_BLACKLIST_FULLPATH
 
 if [ "${ALLOW_GOOGLE_CLOUD}" != 1 ]; then
 
   fxTitle "⏬ Appending Google Cloud IP list..."
   echo "## https://github.com/TurboLabIt/zzfirewall/blob/main/lists/autogen/google-cloud.txt" >> $IP_BLACKLIST_FULLPATH
-  curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/refs/heads/main/lists/autogen/google-cloud.txt?$(date +%s) >> $IP_BLACKLIST_FULLPATH
+  curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/refs/heads/main/lists/autogen/google-cloud.txt >> $IP_BLACKLIST_FULLPATH
   fxExitOnNonZero "$?"
   echo "" >> $IP_BLACKLIST_FULLPATH
 fi
@@ -87,7 +87,7 @@ if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_ARAB} != 0 ]; then
 
   fxTitle "⏬ Downloading 🇦🇪 Arab IP list..."
   IP_BLACKLIST_ARAB_FULLPATH=${DOWNLOADED_LIST_DIR}geos-arab.txt
-  curl -Lo "${IP_BLACKLIST_ARAB_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/arab.txt?$(date +%s)
+  curl -Lo "${IP_BLACKLIST_ARAB_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/arab.txt
 fi
 
 
@@ -95,7 +95,7 @@ if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_CHINA} != 0 ]; then
 
   fxTitle "⏬ Downloading 🇨🇳 China IP list..."
   IP_BLACKLIST_CHINA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-china.txt
-  curl -Lo "${IP_BLACKLIST_CHINA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/china.txt?$(date +%s)
+  curl -Lo "${IP_BLACKLIST_CHINA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/china.txt
 fi
 
 
@@ -103,7 +103,7 @@ if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_INDIA} != 0 ]; then
 
   fxTitle "⏬ Downloading 🇮🇳 India IP list..."
   IP_BLACKLIST_INDIA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-india.txt
-  curl -Lo "${IP_BLACKLIST_INDIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/india.txt?$(date +%s)
+  curl -Lo "${IP_BLACKLIST_INDIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/india.txt
 fi
 
 
@@ -111,7 +111,7 @@ if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_KOREA} != 0 ]; then
 
   fxTitle "⏬ Downloading 🇰🇷 Korea IP list..."
   IP_BLACKLIST_KOREA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-korea.txt
-  curl -Lo "${IP_BLACKLIST_KOREA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/korea.txt?$(date +%s)
+  curl -Lo "${IP_BLACKLIST_KOREA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/korea.txt
 fi
 
 
@@ -119,7 +119,7 @@ if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_RUSSIA} != 0 ]; then
 
   fxTitle "⏬ Downloading 🇷🇺 Russia IP list..."
   IP_BLACKLIST_RUSSIA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-russia.txt
-  curl -Lo "${IP_BLACKLIST_RUSSIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/russia.txt?$(date +%s)
+  curl -Lo "${IP_BLACKLIST_RUSSIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/russia.txt
 fi
 
 
@@ -127,7 +127,7 @@ if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_SOUTH_AMERICA} != 0 ]; then
 
   fxTitle "⏬ Downloading 🇧🇷 South America IP list..."
   IP_BLACKLIST_SOUTH_AMERICA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-south-america.txt
-  curl -Lo "${IP_BLACKLIST_SOUTH_AMERICA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/south-america?$(date +%s)
+  curl -Lo "${IP_BLACKLIST_SOUTH_AMERICA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/south-america.txt
 fi
 
 
@@ -310,7 +310,7 @@ if [ -d /etc/pure-ftpd/conf/ ]; then
 
   else
   
-    curl -o "/etc/pure-ftpd/conf/PassivePortRange" https://raw.githubusercontent.com/TurboLabIt/webstackup/master/config/pure-ftpd/PassivePortRange?$(date +%s)
+    curl -o "/etc/pure-ftpd/conf/PassivePortRange" https://raw.githubusercontent.com/TurboLabIt/webstackup/master/config/pure-ftpd/PassivePortRange
   fi
   
   ls -la /etc/pure-ftpd/conf/
