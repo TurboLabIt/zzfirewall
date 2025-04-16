@@ -254,7 +254,7 @@ createIpSet zzfw_GeoChina "$IP_BLACKLIST_CHINA_FULLPATH"
 createIpSet zzfw_GeoIndia "$IP_BLACKLIST_INDIA_FULLPATH"
 createIpSet zzfw_GeoKorea "$IP_BLACKLIST_KOREA_FULLPATH"
 createIpSet zzfw_GeoRussia "$IP_BLACKLIST_RUSSIA_FULLPATH"
-createIpSet zzfw_GeoSouthAmerica "$IP_BLACKLIST_IP_BLACKLIST_SOUTH_AMERICA_FULLPATH"
+createIpSet zzfw_GeoSouthAmerica "$IP_BLACKLIST_SOUTH_AMERICA_FULLPATH"
 
 
 fxTitle "🧹 Delete the temp folder..."
