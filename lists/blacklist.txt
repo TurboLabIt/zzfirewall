@@ -187,3 +187,7 @@
 
 ## Servers Tech Fzco (vdsina.com)
 77.238.239.0/24
+
+## Shellshock
+18.183.213.115
+54.250.16.51
