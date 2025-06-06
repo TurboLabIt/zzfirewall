@@ -277,7 +277,7 @@ insertBeforeIpsetRules
 
 fxTitle "🚪Insert ipset rules"
 fxMessage "🛑 Enable ipset zzfw_Blacklist..."
-iptables -A INPUT -m set --match-set zzfw_Blacklist src -j DROP
+iptables -A INPUT -m set --match-set zzfw_Blacklist src -j DROP -m comment --comment "🛑 Blacklist (zzfw)"
 
 function addDropRule()
 {
