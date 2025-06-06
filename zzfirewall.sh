@@ -198,7 +198,7 @@ function insertAfterIpsetRules()
   if [ "${ALLOW_WEBSERVER_FROM_WHITELIST}" != 0 ]; then
 
     MSG="👐 HTTP(s) whitelist ipset"
-    fxTitle "$MSG"
+    fxMessage "$MSG"
     iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT
   fi
 
