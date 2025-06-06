@@ -180,6 +180,13 @@ function insertBeforeIpsetRules()
   MSG="📤 Allow EST,REL"
   fxMessage "$MSG"
   iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)"
+
+  if [ "${ALLOW_WEBSERVER_FROM_WHITELIST}" != 0 ]; then
+
+    MSG="👐 HTTP(s) whitelist ipset"
+    fxMessage "$MSG"
+    iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  fi
 }
 
 
@@ -193,13 +200,6 @@ function insertAfterIpsetRules()
     MSG="🌎 Allow HTTP/HTTPS"
     fxMessage "$MSG"
     iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
-  fi
-
-  if [ "${ALLOW_WEBSERVER_FROM_WHITELIST}" != 0 ]; then
-
-    MSG="👐 HTTP(s) whitelist ipset"
-    fxMessage "$MSG"
-    iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
 
   if [ "${ALLOW_SECURE_IMAP}" != 0 ]; then
