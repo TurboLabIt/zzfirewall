@@ -256,6 +256,9 @@ createIpSet zzfw_Whitelist "$IP_WHITELIST_FULLPATH"
 insertBeforeIpsetRules
 insertAfterIpsetRules
 
+fxTitle "🧱 Current status"
+iptables -nL
+
 createIpSet zzfw_Blacklist "$IP_BLACKLIST_FULLPATH"
 createIpSet zzfw_GeoArab "$IP_BLACKLIST_ARAB_FULLPATH"
 createIpSet zzfw_GeoChina "$IP_BLACKLIST_CHINA_FULLPATH"
