@@ -131,6 +131,27 @@ if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_SOUTH_AMERICA} != 0 ]; then
 fi
 
 
+bash ${SCRIPT_DIR}zzfirewall-reset.sh
+
+
+function createIpSet()
+{
+  if [ ! -f "$2" ]; then
+    return 0
+  fi
+
+  fxTitle "🧱 Building ipset $1 from file..."
+  ipset create $1 nethash -exist hashsize 65536 maxelem 200000
+  while read -r line || [[ -n "$line" ]]; do
+    local FIRSTCHAR="${line:0:1}"
+    if [ "$FIRSTCHAR" != "#" ] && [ "$FIRSTCHAR" != "" ]; then
+      echo "Add: $line" >> "${IP_LOG_FILE}"
+      ipset add $1 $line
+    fi
+  done < "$2"
+}
+
+
 function insertBeforeIpsetRules()
 {
   fxTitle "🚪Insert pre-ipset rules"
@@ -172,6 +193,13 @@ function insertAfterIpsetRules()
     MSG="🌎 Allow HTTP/HTTPS"
     fxMessage "$MSG"
     iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  fi
+
+  if [ "${ALLOW_WEBSERVER_FROM_WHITELIST}" != 0 ]; then
+
+    MSG="👐 HTTP(s) whitelist ipset"
+    fxTitle "$MSG"
+    iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT
   fi
 
   if [ "${ALLOW_SECURE_IMAP}" != 0 ]; then
@@ -222,32 +250,12 @@ function insertAfterIpsetRules()
 }
 
 
-bash ${SCRIPT_DIR}zzfirewall-reset.sh
+createIpSet zzfw_Whitelist "$IP_WHITELIST_FULLPATH"
 
 ## the server must be protected while we build the ipsets
 insertBeforeIpsetRules
 insertAfterIpsetRules
 
-
-function createIpSet()
-{
-  if [ ! -f "$2" ]; then
-    return 0
-  fi 
-
-  fxTitle "🧱 Building ipset $1 from file..."
-  ipset create $1 nethash -exist hashsize 65536 maxelem 200000
-  while read -r line || [[ -n "$line" ]]; do
-    local FIRSTCHAR="${line:0:1}"
-    if [ "$FIRSTCHAR" != "#" ] && [ "$FIRSTCHAR" != "" ]; then
-      echo "Add: $line" >> "${IP_LOG_FILE}"
-      ipset add $1 $line
-    fi  
-  done < "$2"
-}
-
-
-createIpSet zzfw_Whitelist "$IP_WHITELIST_FULLPATH"
 createIpSet zzfw_Blacklist "$IP_BLACKLIST_FULLPATH"
 createIpSet zzfw_GeoArab "$IP_BLACKLIST_ARAB_FULLPATH"
 createIpSet zzfw_GeoChina "$IP_BLACKLIST_CHINA_FULLPATH"
@@ -261,18 +269,10 @@ fxTitle "🧹 Delete the temp folder..."
 rm -rf $DOWNLOADED_LIST_DIR
 
 bash ${SCRIPT_DIR}zzfirewall-reset.sh light
-
 insertBeforeIpsetRules
 
-if [ "${ALLOW_WEBSERVER}" != 0 ]; then
-
-  MSG="👐 whitelist ipset"
-  fxTitle "$MSG"
-  iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT
-fi
 
 fxTitle "🚪Insert ipset rules"
-
 fxMessage "🛑 Enable ipset zzfw_Blacklist..."
 iptables -A INPUT -m set --match-set zzfw_Blacklist src -j DROP
 
