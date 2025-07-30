@@ -197,3 +197,5 @@
 18.183.213.115
 54.250.16.51
 
+## Alibaba Cloud / Bytespider (HTTP flood against phpBB)
+47.79.0.0/16
