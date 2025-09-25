@@ -166,7 +166,6 @@
 66.249.79.224/27
 66.249.79.32/27
 66.249.79.64/27
-66.249.79.96/27
 
 
 ## 🔎 Allow from UptimerobotBot - https://uptimerobot.com/inc/files/ips/IPv4.txt
