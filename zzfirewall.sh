@@ -268,6 +268,12 @@ function insertAfterIpsetRules()
 
 createIpSet zzfw_Whitelist "$IP_WHITELIST_FULLPATH"
 
+
+if [ ${GEOALLOW_WEB_NOT_BLOCKED_ITALY} != 0 ]; then
+  createIpSet zzfw_GeoItaly "$IP_WHITELIST_ITALY_FULLPATH"
+fi
+
+
 ## the server must be protected while we build the ipsets
 insertBeforeIpsetRules
 insertAfterIpsetRules
@@ -282,7 +288,6 @@ createIpSet zzfw_GeoIndia "$IP_BLACKLIST_INDIA_FULLPATH"
 createIpSet zzfw_GeoKorea "$IP_BLACKLIST_KOREA_FULLPATH"
 createIpSet zzfw_GeoRussia "$IP_BLACKLIST_RUSSIA_FULLPATH"
 createIpSet zzfw_GeoSouthAmerica "$IP_BLACKLIST_SOUTH_AMERICA_FULLPATH"
-createIpSet zzfw_GeoItaly "$IP_WHITELIST_ITALY_FULLPATH"
 
 
 fxTitle "🧹 Delete the temp folder..."
