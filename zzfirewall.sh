@@ -269,13 +269,13 @@ function insertAfterIpsetRules()
 createIpSet zzfw_Whitelist "$IP_WHITELIST_FULLPATH"
 
 
+## the server must be protected while we build the ipsets
+insertBeforeIpsetRules
+
 if [ ${GEOALLOW_WEB_NOT_BLOCKED_ITALY} != 0 ]; then
   createIpSet zzfw_GeoItaly "$IP_WHITELIST_ITALY_FULLPATH"
 fi
 
-
-## the server must be protected while we build the ipsets
-insertBeforeIpsetRules
 insertAfterIpsetRules
 
 fxTitle "🧱 Current status"
