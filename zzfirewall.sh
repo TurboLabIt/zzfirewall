@@ -131,6 +131,14 @@ if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_SOUTH_AMERICA} != 0 ]; then
 fi
 
 
+if [ ${GEOALLOW_WEB_NOT_BLOCKED_ITALY} != 0 ]; then
+
+  fxTitle "⏬ Downloading 🇮🇹 Italy IP list..."
+  IP_WHITELIST_ITALY_FULLPATH=${DOWNLOADED_LIST_DIR}italy.txt
+  curl -Lo "${IP_WHITELIST_ITALY_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/italy.txt
+fi
+
+
 bash ${SCRIPT_DIR}zzfirewall-reset.sh
 
 
@@ -202,6 +210,14 @@ function insertAfterIpsetRules()
     iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
 
+  ## allow access even if ALLOW_WEBSERVER=0
+  if [ "${GEOALLOW_WEB_NOT_BLOCKED_ITALY}" != 0 ]; then
+
+    MSG="🇮🇹 Allow HTTP/HTTPS from Italy"
+    fxMessage "$MSG"
+    iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_GeoItaly src -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  fi
+
   if [ "${ALLOW_SECURE_IMAP}" != 0 ]; then
 
     MSG="📧 Allow secure IMAP over TLS/SSL"
@@ -266,6 +282,7 @@ createIpSet zzfw_GeoIndia "$IP_BLACKLIST_INDIA_FULLPATH"
 createIpSet zzfw_GeoKorea "$IP_BLACKLIST_KOREA_FULLPATH"
 createIpSet zzfw_GeoRussia "$IP_BLACKLIST_RUSSIA_FULLPATH"
 createIpSet zzfw_GeoSouthAmerica "$IP_BLACKLIST_SOUTH_AMERICA_FULLPATH"
+createIpSet zzfw_GeoItaly "$IP_WHITELIST_ITALY_FULLPATH"
 
 
 fxTitle "🧹 Delete the temp folder..."
