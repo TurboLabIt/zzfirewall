@@ -1,34 +1,12 @@
 <?php
+require 'generate.lib.php';
+
 const OUT_PATH = '/usr/local/turbolab.it/zzfirewall/lists/autogen/';
 
 
-/**
- * Google Cloud
- * ============
- */
 const GOOGLE_CLOUD_LIST_URL = 'https://www.gstatic.com/ipranges/cloud.json';
 echo "⚙️ Building Google Cloud list from " . GOOGLE_CLOUD_LIST_URL . "..." . PHP_EOL;
-$txtGoogleCloud = file_get_contents(GOOGLE_CLOUD_LIST_URL);
-
-if($txtGoogleCloud === false) {
-    die("⚠️ Download from " . GOOGLE_CLOUD_LIST_URL . " FAILED! Aborting!");
-}
-
-$arrGoogle = json_decode($txtGoogleCloud);
-
-if( !is_object($arrGoogle) ) {
-    die("⚠️ json_decode from " . GOOGLE_CLOUD_LIST_URL . " FAILED! Aborting!");
-}
-
-$txtGoogleCloud = "";
-foreach($arrGoogle->prefixes as $oneItem) {
-
-    if( empty($oneItem->ipv4Prefix) ) {
-        continue;
-    }
-
-    $txtGoogleCloud .= $oneItem->ipv4Prefix . PHP_EOL;
-}
+$txtGoogleCloud = implode(PHP_EOL, getGoogleIpList(GOOGLE_CLOUD_LIST_URL) ) . PHP_EOL;
 
 $filePath = OUT_PATH . 'google-cloud.txt';
 echo "⚙️ Writing the file to $filePath..." . PHP_EOL;
