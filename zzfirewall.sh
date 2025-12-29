@@ -41,6 +41,9 @@ else
 fi
 
 
+###################
+# 🟢 WHITELISTS 🟢 #
+###################
 fxTitle "⏬ Downloading combined IP white list..."
 IP_WHITELIST_FULLPATH=${DOWNLOADED_LIST_DIR}autogen-whitelist.txt
 curl -Lo "${IP_WHITELIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/whitelist.txt
@@ -52,6 +55,21 @@ curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/whitelis
 fxExitOnNonZero "$?"
 echo "" >> $IP_WHITELIST_FULLPATH
 
+fxTitle "⏬ Downloading Google IP list (complete)..."
+DOWNLOADED_FILE_IPLIST_GOOGLE_ALL=${DOWNLOADED_LIST_DIR}google.txt
+curl -Lo "${DOWNLOADED_FILE_IPLIST_GOOGLE_ALL}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/refs/heads/main/lists/autogen/google.txt
+
+IP_WHITELIST_ITALY_FULLPATH=${DOWNLOADED_LIST_DIR}italy.txt
+if [ ${GEOALLOW_WEB_NOT_BLOCKED_ITALY} != 0 ]; then
+
+  fxTitle "⏬ Downloading 🇮🇹 Italy IP list..."
+  curl -Lo "${IP_WHITELIST_ITALY_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/italy.txt
+fi
+
+
+####################
+# 🔴 BLACKLISTS 🔴 #
+####################
 fxTitle "⏬ Downloading combined IP blacklist..."
 IP_BLACKLIST_FULLPATH=${DOWNLOADED_LIST_DIR}autogen-blacklist.txt
 curl -Lo "${IP_BLACKLIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/blacklist.txt
@@ -74,68 +92,57 @@ fxTitle "⏬ Appending https://github.com/stamparm/ipsum ..."
 echo "## https://github.com/stamparm/ipsum" >> $IP_BLACKLIST_FULLPATH
 curl --compressed https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt 2>/dev/null | grep -v "#" | grep -v -E "\s[1-2]$" | cut -f 1 >> $IP_BLACKLIST_FULLPATH
 
+DOWNLOADED_FILE_IPLIST_GOOGLE_CLOUD=${DOWNLOADED_LIST_DIR}google-cloud.txt
 if [ "${ALLOW_GOOGLE_CLOUD}" != 1 ]; then
 
-  fxTitle "⏬ Appending Google Cloud IP list..."
-  echo "## https://github.com/TurboLabIt/zzfirewall/blob/main/lists/autogen/google-cloud.txt" >> $IP_BLACKLIST_FULLPATH
-  curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/refs/heads/main/lists/autogen/google-cloud.txt >> $IP_BLACKLIST_FULLPATH
-  fxExitOnNonZero "$?"
-  echo "" >> $IP_BLACKLIST_FULLPATH
+  fxTitle "⏬ Downloading Google Cloud IP list..."
+  curl -Lo "${DOWNLOADED_FILE_IPLIST_GOOGLE_CLOUD}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/refs/heads/main/lists/autogen/google-cloud.txt
 fi
 
+
+##################
+# 🔴 GEOBLOCK 🔴 #
+##################
+DOWNLOADED_FILE_IPLIST_GEO_ARAB=${DOWNLOADED_LIST_DIR}geos-arab.txt
 if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_ARAB} != 0 ]; then
 
   fxTitle "⏬ Downloading 🇦🇪 Arab IP list..."
-  IP_BLACKLIST_ARAB_FULLPATH=${DOWNLOADED_LIST_DIR}geos-arab.txt
-  curl -Lo "${IP_BLACKLIST_ARAB_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/arab.txt
+  curl -Lo "${DOWNLOADED_FILE_IPLIST_GEO_ARAB}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/arab.txt
 fi
 
-
+DOWNLOADED_FILE_IPLIST_GEO_CHINA=${DOWNLOADED_LIST_DIR}geos-china.txt
 if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_CHINA} != 0 ]; then
 
   fxTitle "⏬ Downloading 🇨🇳 China IP list..."
-  IP_BLACKLIST_CHINA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-china.txt
-  curl -Lo "${IP_BLACKLIST_CHINA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/china.txt
+  curl -Lo "${DOWNLOADED_FILE_IPLIST_GEO_CHINA}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/china.txt
 fi
 
-
+DOWNLOADED_FILE_IPLIST_GEO_INDIA=${DOWNLOADED_LIST_DIR}geos-india.txt
 if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_INDIA} != 0 ]; then
 
   fxTitle "⏬ Downloading 🇮🇳 India IP list..."
-  IP_BLACKLIST_INDIA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-india.txt
-  curl -Lo "${IP_BLACKLIST_INDIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/india.txt
+  curl -Lo "${DOWNLOADED_FILE_IPLIST_GEO_INDIA}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/india.txt
 fi
 
-
+DOWNLOADED_FILE_IPLIST_GEO_KOREA=${DOWNLOADED_LIST_DIR}geos-korea.txt
 if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_KOREA} != 0 ]; then
 
   fxTitle "⏬ Downloading 🇰🇷 Korea IP list..."
-  IP_BLACKLIST_KOREA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-korea.txt
-  curl -Lo "${IP_BLACKLIST_KOREA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/korea.txt
+  curl -Lo "${DOWNLOADED_FILE_IPLIST_GEO_KOREA}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/korea.txt
 fi
 
-
+DOWNLOADED_FILE_IPLIST_GEO_RUSSIA=${DOWNLOADED_LIST_DIR}geos-russia.txt
 if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_RUSSIA} != 0 ]; then
 
   fxTitle "⏬ Downloading 🇷🇺 Russia IP list..."
-  IP_BLACKLIST_RUSSIA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-russia.txt
-  curl -Lo "${IP_BLACKLIST_RUSSIA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/russia.txt
+  curl -Lo "${DOWNLOADED_FILE_IPLIST_GEO_RUSSIA}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/russia.txt
 fi
 
-
+DOWNLOADED_FILE_IPLIST_GEO_SOUTH_AMERICA=${DOWNLOADED_LIST_DIR}geos-south-america.txt
 if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_SOUTH_AMERICA} != 0 ]; then
 
   fxTitle "⏬ Downloading 🇧🇷 South America IP list..."
-  IP_BLACKLIST_SOUTH_AMERICA_FULLPATH=${DOWNLOADED_LIST_DIR}geos-south-america.txt
-  curl -Lo "${IP_BLACKLIST_SOUTH_AMERICA_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/south-america.txt
-fi
-
-
-if [ ${GEOALLOW_WEB_NOT_BLOCKED_ITALY} != 0 ]; then
-
-  fxTitle "⏬ Downloading 🇮🇹 Italy IP list..."
-  IP_WHITELIST_ITALY_FULLPATH=${DOWNLOADED_LIST_DIR}italy.txt
-  curl -Lo "${IP_WHITELIST_ITALY_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/italy.txt
+  curl -Lo "${DOWNLOADED_FILE_IPLIST_GEO_SOUTH_AMERICA}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/south-america.txt
 fi
 
 
@@ -267,27 +274,25 @@ function insertAfterIpsetRules()
 
 
 createIpSet zzfw_Whitelist "$IP_WHITELIST_FULLPATH"
-
-
 ## the server must be protected while we build the ipsets
 insertBeforeIpsetRules
-
-if [ ${GEOALLOW_WEB_NOT_BLOCKED_ITALY} != 0 ]; then
-  createIpSet zzfw_GeoItaly "$IP_WHITELIST_ITALY_FULLPATH"
-fi
-
+createIpSet zzfw_GeoItaly "$IP_WHITELIST_ITALY_FULLPATH"
 insertAfterIpsetRules
 
-fxTitle "🧱 Current status"
+fxTitle "🧱 Intermediate status alpha"
 iptables -nL
 
+
 createIpSet zzfw_Blacklist "$IP_BLACKLIST_FULLPATH"
-createIpSet zzfw_GeoArab "$IP_BLACKLIST_ARAB_FULLPATH"
-createIpSet zzfw_GeoChina "$IP_BLACKLIST_CHINA_FULLPATH"
-createIpSet zzfw_GeoIndia "$IP_BLACKLIST_INDIA_FULLPATH"
-createIpSet zzfw_GeoKorea "$IP_BLACKLIST_KOREA_FULLPATH"
-createIpSet zzfw_GeoRussia "$IP_BLACKLIST_RUSSIA_FULLPATH"
-createIpSet zzfw_GeoSouthAmerica "$IP_BLACKLIST_SOUTH_AMERICA_FULLPATH"
+createIpSet zzfw_GoogleCloud "$DOWNLOADED_FILE_IPLIST_GOOGLE_CLOUD"
+createIpSet zzfw_GoogleAll "$DOWNLOADED_FILE_IPLIST_GOOGLE_ALL"
+
+createIpSet zzfw_GeoArab "$DOWNLOADED_FILE_IPLIST_GEO_ARAB"
+createIpSet zzfw_GeoChina "$DOWNLOADED_FILE_IPLIST_GEO_CHINA"
+createIpSet zzfw_GeoIndia "$DOWNLOADED_FILE_IPLIST_GEO_INDIA"
+createIpSet zzfw_GeoKorea "$DOWNLOADED_FILE_IPLIST_GEO_KOREA"
+createIpSet zzfw_GeoRussia "$DOWNLOADED_FILE_IPLIST_GEO_RUSSIA"
+createIpSet zzfw_GeoSouthAmerica "$DOWNLOADED_FILE_IPLIST_GEO_SOUTH_AMERICA"
 
 
 fxTitle "🧹 Delete the temp folder..."
@@ -300,6 +305,16 @@ insertBeforeIpsetRules
 fxTitle "🚪Insert ipset rules"
 fxMessage "🛑 Enable ipset zzfw_Blacklist..."
 iptables -A INPUT -m set --match-set zzfw_Blacklist src -j DROP -m comment --comment "🛑 Blacklist (zzfw)"
+
+if [ "${ALLOW_GOOGLE_CLOUD}" != 1 ]; then
+
+  fxMessage "🛑 Enable ipset zzfw_GoogleCloud..."
+  iptables -A INPUT -m set --match-set zzfw_GoogleCloud src -j DROP -m comment --comment "🛑 Google Cloud (zzfw)"
+fi
+
+fxMessage "🟢 Enable ipset zzfw_Google..."
+iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_GoogleAll src -j ACCEPT -m comment --comment "🟢 Google (zzfw)"
+
 
 function addDropRule()
 {
@@ -347,31 +362,8 @@ else
   fxMessage "pure-ftpd not found. No PassivePortRange update"
 fi
 
-fxTitle "ipset zzfw_Blacklist"
-ipset list zzfw_Blacklist | head -n 7
-echo "...."
 
-function printIpSet()
-{
-  if [ "${GEOBLOCK}" = 0 ] || [ "${2}" = 0 ]; then
-    return 0
-  fi
-
-  fxTitle "ipset $1"
-  ipset list $1 | head -n 7
-  echo "...."
-}
-
-
-printIpSet zzfw_GeoArab "${GEOBLOCK_ARAB}"
-printIpSet zzfw_GeoChina "${GEOBLOCK_CHINA}"
-printIpSet zzfw_GeoIndia "${GEOBLOCK_INDIA}"
-printIpSet zzfw_GeoKorea "${GEOBLOCK_KOREA}"
-printIpSet zzfw_GeoRussia "${GEOBLOCK_RUSSIA}"
-printIpSet zzfw_GeoSouthAmerica "${GEOBLOCK_SOUTH_AMERICA}"
-
-
-fxTitle "🧱 Current status"
+fxTitle "🧱🧱🧱 FINAL FIREWALL STATUS 🧱🧱🧱"
 iptables -nL
 
 fxTitle "Need the log?"
