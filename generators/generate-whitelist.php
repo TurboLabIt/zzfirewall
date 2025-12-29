@@ -42,8 +42,18 @@ $filePath = WHITELIST_OUT_PATH . 'whitelist.txt';
 echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
 file_put_contents($filePath, $txtWhitelist);
 
-$filePath = WHITELIST_OUT_PATH . 'google.txt';
+$filePath = WHITELIST_OUT_PATH . 'google-search.txt';
 echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
 file_put_contents($filePath, $txtGoogle);
+
+
+echo "⚙️ Writing all Google IP list (all services, including public cloud) - not whitelisted..." . PHP_EOL;
+const GOOGLE_URL = 'https://www.gstatic.com/ipranges/goog.json';
+$txtGoogleAll = implode(PHP_EOL, getGoogleIpList(GOOGLE_URL) ) . PHP_EOL;
+
+$filePath = WHITELIST_OUT_PATH . 'google.txt';
+echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
+file_put_contents($filePath, $txtGoogleAll);
+
 
 echo PHP_EOL . "✅ " . basename(__FILE__, '.php') . " is DONE" . PHP_EOL;
