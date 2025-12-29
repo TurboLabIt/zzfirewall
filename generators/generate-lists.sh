@@ -75,6 +75,7 @@ fxTitle "✔️ Git commit..."
 sed -i 's/\r$//' ${SCRIPT_DIR}../lists/autogen/whitelist.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/whitelist.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/google.txt
+git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/google-search.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/google-cloud.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/blacklist.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/geos/arab.txt
