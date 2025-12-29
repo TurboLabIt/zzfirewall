@@ -132,7 +132,6 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
     }
 
 
-
     protected function downloadGeoIPFile() : self
     {
       $httpClient   = HttpClient::create();
