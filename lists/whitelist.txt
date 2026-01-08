@@ -29,3 +29,6 @@
 ## Clerk
 # https://help.clerk.io/platform/data/sync/#whitelisting-ip-address
 52.57.0.11
+
+## Oct8ne
+40.115.11.160
