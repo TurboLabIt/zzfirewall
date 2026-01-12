@@ -33,6 +33,30 @@ $txtWhitelist .= $txtUptimerobot;
 
 
 /**
+ * Allow connections from Bunny CDN...
+ * ===================================
+ */
+// https://bunnycdn.com/api/system/edgeserverlist
+const BUNNYCDN_WHITELIST_URL = 'https://bunnycdn.com/api/system/edgeserverlist';
+echo "⚙️ Adding from Bunny CDN ..." . PHP_EOL;
+$txtWhitelist .= PHP_EOL . PHP_EOL . '## 🔎 Allow from Bunny CDN - ' . BUNNYCDN_WHITELIST_URL . PHP_EOL;
+$oXmlBunnyCdn = simplexml_load_file(BUNNYCDN_WHITELIST_URL);
+
+if($oXmlBunnyCdn === false) {
+    die("⚠️ Parsing XML from " . BUNNYCDN_WHITELIST_URL . " FAILED! Aborting!");
+}
+
+// The XML uses a default namespace, so we must register it to query elements.
+// The namespace URI matches the 'xmlns' attribute in the root <ArrayOfstring> element.
+$oXmlBunnyCdn->registerXPathNamespace('ns', 'http://schemas.microsoft.com/2003/10/Serialization/Arrays');
+$oBunnyCdnIps = $oXmlBunnyCdn->xpath('//ns:string');
+foreach($oBunnyCdnIps as $ip) {
+    // Cast the SimpleXMLElement object to a string and append
+    $txtWhitelist .= (string)$ip . PHP_EOL;
+}
+
+
+/**
  * Writing the file...
  * ===================
  */
