@@ -19,7 +19,9 @@ if [ "$ONE_WHITELIST_EXISTS" != 0 ]; then
 fi
 
 if [ -z "$(command -v dig)" ]; then
-  sudo apt update && sudo apt install dnsutils -y
+
+  sudo apt update
+  sudo apt install dnsutils -y
 fi
 
 fxTitle "Testing domains resolution..."
