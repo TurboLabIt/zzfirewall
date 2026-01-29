@@ -9,14 +9,12 @@ Just execute:
 
 ````bash
 sudo apt install curl -y && curl -s https://raw.githubusercontent.com/TurboLabIt/zzfirewall/master/setup.sh?$(date +%s) | sudo bash
-
 ````
 
 Now copy the provided sample configuration file (`zzfirewall.default.conf`) to your own `zzfirewall.conf` and set your preference:
 
 ````bash
 sudo cp /usr/local/turbolab.it/zzfirewall/zzfirewall.default.conf /etc/turbolab.it/zzfirewall.conf && sudo nano /etc/turbolab.it/zzfirewall.conf
-
 ````
 
 
@@ -24,7 +22,6 @@ sudo cp /usr/local/turbolab.it/zzfirewall/zzfirewall.default.conf /etc/turbolab.
 
 ````bash
 sudo zzfirewall
-
 ````
 
 
@@ -34,7 +31,13 @@ If you want to limit SSH access to pre-approved hosts, create a file and add you
 
 ````bash
 sudo nano /etc/turbolab.it/zzfirewall-whitelist.conf && sudo zzfirewall-whitelist-update
+````
 
+
+# On-the-fly IP whitelist
+
+````bash
+sudo iptables -I "INPUT" -s "TRUSTED_IP_ADDRESS" -j ACCEPT
 ````
 
 
@@ -42,7 +45,6 @@ sudo nano /etc/turbolab.it/zzfirewall-whitelist.conf && sudo zzfirewall-whitelis
 
 ````bash
 sudo zzfirewall-reset
-
 ````
 
 
@@ -50,5 +52,4 @@ sudo zzfirewall-reset
 
 ````bash
 sudo zzfirewall-generate
-
 ````
