@@ -53,6 +53,19 @@ echo ""
 XDEBUG_MODE=off ${PHP_CLI} ${SCRIPT_DIR}generate-blacklist.php
 echo ""
 
+
+fxTitle "🧱 Adding Contabo to the blacklist..."
+echo "" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
+echo "## 🛑 Contabo " >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
+curl -s 'https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS51167' \
+| jq -r '.data.prefixes[].prefix' \
+| sort -u | grep -v ":" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
+
+curl -s 'https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS40021' \
+| jq -r '.data.prefixes[].prefix' \
+| sort -u | grep -v ":" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
+
+
 fxTitle "🧱 Adding abuseipdb to the blacklist..."
 ABUSE_IP=$(curl -G https://api.abuseipdb.com/api/v2/blacklist \
   -d limit=500000 \
