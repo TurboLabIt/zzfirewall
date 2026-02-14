@@ -205,3 +205,16 @@
 
 ## Range assigned to  ReliableSite 2025-10-07
 45.88.186.0/24
+
+##  Scaleway https://www.scaleway.com/en/docs/account/reference-content/scaleway-network-information/
+62.210.0.0/16
+195.154.0.0/16
+212.129.0.0/18
+62.4.0.0/19
+212.83.128.0/19
+212.83.160.0/19
+212.47.224.0/19
+163.172.0.0/16
+51.15.0.0/16
+151.115.0.0/16
+51.158.0.0/15
