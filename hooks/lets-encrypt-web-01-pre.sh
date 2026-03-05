@@ -8,7 +8,7 @@ source "${SCRIPT_DIR}lets-encrypt-web.sh"
 
 
 fxTitle "Temporary allow HTTP(s) from all..."
-iptables -I ${IPTABLES_COMMAND_ARGUMENTS}
+iptables -I "${IPTABLES_COMMAND_ARGUMENTS[@]}"
 
 
 fxTitle "🧱🧱🧱 FINAL FIREWALL STATUS 🧱🧱🧱"

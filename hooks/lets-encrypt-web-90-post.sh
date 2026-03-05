@@ -7,8 +7,8 @@ fxHeader "🪝 zzfirewall + certbot: 90-post hook"
 source "${SCRIPT_DIR}lets-encrypt-web.sh"
 
 
-fxTitle "Remove temp. HTTP(s) from all rule..."
-iptables -D ${IPTABLES_COMMAND_ARGUMENTS}
+fxTitle "Remove the temp. Allow HTTP(s) from all rule..."
+iptables -D "${IPTABLES_COMMAND_ARGUMENTS[@]}"
 
 
 fxTitle "🧱🧱🧱 FINAL FIREWALL STATUS 🧱🧱🧱"
