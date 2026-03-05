@@ -8,7 +8,9 @@ source "${SCRIPT_DIR}lets-encrypt-web.sh"
 
 
 fxTitle "Remove the temp. Allow HTTP(s) from all rule..."
-iptables -D "${IPTABLES_COMMAND_ARGUMENTS[@]}"
+while iptables -D "${IPTABLES_COMMAND_ARGUMENTS[@]}" 2>/dev/null; do
+  fxOK "Removed a matching rule..."
+done
 
 
 fxTitle "🧱🧱🧱 FINAL FIREWALL STATUS 🧱🧱🧱"
