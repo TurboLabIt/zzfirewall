@@ -7,8 +7,8 @@ fxHeader "🪝 zzfirewall + certbot: 01-pre hook"
 source "${SCRIPT_DIR}lets-encrypt-web.sh"
 
 
-fxTitle "Allow HTTP(s) from all..."
-iptables -D ${IPTABLES_COMMAND_ARGUMENTS}
+fxTitle "Temporary allow HTTP(s) from all..."
+iptables -I ${IPTABLES_COMMAND_ARGUMENTS}
 
 
 fxTitle "🧱🧱🧱 FINAL FIREWALL STATUS 🧱🧱🧱"

@@ -8,7 +8,7 @@ source "${SCRIPT_DIR}lets-encrypt-web.sh"
 
 
 fxTitle "Remove temp. HTTP(s) from all rule..."
-iptables -I ${IPTABLES_COMMAND_ARGUMENTS}
+iptables -D ${IPTABLES_COMMAND_ARGUMENTS}
 
 
 fxTitle "🧱🧱🧱 FINAL FIREWALL STATUS 🧱🧱🧱"

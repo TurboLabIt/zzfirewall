@@ -1,7 +1,15 @@
 rootCheck
 fxConfigLoader
 HOOK_NAME='⚠️ TEMP! zzfirewall + certbot: 01-pre hook'
-IPTABLES_COMMAND_ARGUMENTS="INPUT -p tcp -m multiport --dports 80,443 -m comment --comment \"${HOOK_NAME} (zzfw)\" -j ACCEPT"
+IPTABLES_COMMAND_ARGUMENTS=(
+    INPUT
+    -p tcp
+    -m multiport
+    --dports 80,443
+    -m comment
+    --comment "${HOOK_NAME} (zzfw)"
+    -j ACCEPT
+)
 
 
 fxTitle "📦 Checking packages...."
