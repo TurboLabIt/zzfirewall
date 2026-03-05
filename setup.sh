@@ -13,8 +13,16 @@ fxLinkBin ${INSTALL_DIR}${SCRIPT_NAME}.sh
 fxLinkBin ${INSTALL_DIR}${SCRIPT_NAME}-reset.sh
 fxLinkBin ${INSTALL_DIR}whitelister/whitelister.sh ${SCRIPT_NAME}-whitelist-update
 
+
 if [ ! -f "/etc/cron.d/zzfirewall" ]; then
   cp "${INSTALL_DIR}cron/cron" "/etc/cron.d/zzfirewall"
+fi
+
+
+if [ ! -f "/etc/letsencrypt/renewal-hooks/" ]; then
+
+  fxLink "${INSTALL_DIR}hooks/lets-encrypt-web-01-pre.sh" "/etc/letsencrypt/renewal-hooks/pre/zzfirewall-web-open.sh"
+  fxLink "${INSTALL_DIR}hooks/lets-encrypt-web-90-post.sh" "/etc/letsencrypt/renewal-hooks/post/zzfirewall-web-close.sh"
 fi
 
 ## maintainer stuff
