@@ -3,31 +3,12 @@ echo ""
 
 SCRIPT_NAME=zzfirewall
 source "/usr/local/turbolab.it/bash-fx/bash-fx.sh"
-HOOK_NAME='🪝 zzfirewall + certbot: 01-pre hook'
-fxHeader "${HOOK_NAME}"
-rootCheck
-fxConfigLoader
+fxHeader "🪝 zzfirewall + certbot: 01-pre hook"
+source "${SCRIPT_DIR}hooks/lets-encrypt-web.sh"
 
 
-fxTitle "📦 Checking packages...."
-if [ -z "$(command -v iptables)" ] || [ -z "$(command -v certbot)" ]; then
-
-  fxWarning "iptables or certbot not installed. Skipping 🦘"
-  fxEndFooter
-  exit
-fi
-
-
-if ! iptables -S INPUT | grep -q '^-A'; then
-
-  fxWarning "iptables INPUT chain is empty. Skipping 🦘"
-  fxEndFooter
-  exit
-fi
-
-
-fxTitle "Allow HTTP(s) from all"
-iptables -I INPUT -p tcp -m multiport --dports 80,443 -m comment --comment "${HOOK_NAME} (zzfw)" -j ACCEPT
+fxTitle "Allow HTTP(s) from all..."
+iptables -D ${IPTABLES_COMMAND_ARGUMENTS}
 
 
 fxTitle "🧱🧱🧱 FINAL FIREWALL STATUS 🧱🧱🧱"
