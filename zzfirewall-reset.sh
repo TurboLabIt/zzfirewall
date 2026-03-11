@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ### FACTORY-RESET IPTABLES 
-# clear && sudo apt install curl -y && curl -s https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/zzfirewall-reset.sh?$(date +%s) | sudo bash
+# clear && sudo apt install curl -y && curl -s https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/zzfirewall-reset.sh | sudo bash
 
 ## bash-fx
 if [ -f "/usr/local/turbolab.it/bash-fx/bash-fx.sh" ]; then
