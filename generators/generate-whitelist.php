@@ -42,7 +42,7 @@ echo "⚙️ Adding from Bunny CDN..." . PHP_EOL;
 $txtWhitelist .= PHP_EOL . PHP_EOL . '## 🔎 Allow from Bunny CDN - ' . BUNNYCDN_WHITELIST_URL . PHP_EOL;
 $txtJson = file_get_contents(BUNNYCDN_WHITELIST_URL);
 
-if($txtUptimerobot === false) {
+if($txtJson === false) {
     die("⚠️ Download from " . BUNNYCDN_WHITELIST_URL . " FAILED! Aborting!");
 }
 
