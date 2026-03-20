@@ -57,6 +57,18 @@ foreach($oJson as $ip) {
 
 
 /**
+ * Allow connections from Meta (Facebook)...
+ * ==========================================
+ */
+// https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS32934
+const META_ASN = 'AS32934';
+echo "⚙️ Adding from Meta (Facebook) - " . META_ASN . "..." . PHP_EOL;
+$txtMeta = implode(PHP_EOL, getRipeIpList(META_ASN) ) . PHP_EOL;
+$txtWhitelist .= PHP_EOL . PHP_EOL . '## 🔎 Allow from Meta (Facebook) - ' . META_ASN . PHP_EOL;
+$txtWhitelist .= $txtMeta;
+
+
+/**
  * Writing the file...
  * ===================
  */
@@ -69,6 +81,10 @@ file_put_contents($filePath, $txtWhitelist);
 $filePath = WHITELIST_OUT_PATH . 'google-search.txt';
 echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
 file_put_contents($filePath, $txtGoogle);
+
+$filePath = WHITELIST_OUT_PATH . 'meta.txt';
+echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
+file_put_contents($filePath, $txtMeta);
 
 
 echo "⚙️ Writing all Google IP list (all services, including public cloud) - not whitelisted..." . PHP_EOL;
