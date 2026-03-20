@@ -8,7 +8,7 @@ $txtWhitelist .= '## See: https://github.com/TurboLabIt/zzfirewall/';
 
 echo "⚙️ Allow from GoogleBot (search)..." . PHP_EOL;
 // https://developers.google.com/search/docs/crawling-indexing/verifying-googlebot
-const GOOGLEBOT_URL = 'https://developers.google.com/static/search/apis/ipranges/googlebot.json';
+const GOOGLEBOT_URL = 'https://developers.google.com/static/crawling/ipranges/common-crawlers.json';
 $txtWhitelist .= PHP_EOL . PHP_EOL . '## 🔎 Allow from GoogleBot - ' . GOOGLEBOT_URL . PHP_EOL;
 
 $txtGoogle = implode(PHP_EOL, getGoogleIpList(GOOGLEBOT_URL) ) . PHP_EOL;
