@@ -125,3 +125,10 @@
 ## Klaviyo
 # https://help.klaviyo.com/hc/en-us/articles/19143781289115
 207.211.192.0/20
+
+
+## Poinzilla
+# https://guida.poinzilla.com/article/198-piattaforma-magento-2
+49.13.112.101
+88.198.202.20
+
