@@ -68,6 +68,7 @@
 20.50.2.37
 
 ## Brevo
+# https://help.brevo.com/hc/it/articles/209579245-Plugin-Brevo-per-WooCommerce-Sincronizzazione-del-negozio-e-automazione-del-marketing
 185.107.232.0/28
 185.107.232.16/29
 185.107.232.24/32
