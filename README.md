@@ -42,6 +42,7 @@ sudo nano /etc/turbolab.it/zzfirewall-whitelist.conf && \
 To allow HTTP(S) traffic from specific countries only, do this:
 
 ````bash
+## Allow web traffic from specific countries only
 ALLOW_WEBSERVER=0
 GEOALLOW_WEB_COUNTRIES=italy,switzerland
 ````
@@ -52,6 +53,7 @@ GEOALLOW_WEB_COUNTRIES=italy,switzerland
 Just set:
 
 ````bash
+## Allow web traffic from Cloudflare only
 ALLOW_WEBSERVER=0
 ````
 
