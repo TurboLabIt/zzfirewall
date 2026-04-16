@@ -1,6 +1,6 @@
 # 🔥🧱 zzfirewall 🧱🔥
 
-iptables rules to shut off undesired connections and clients from certain geos
+iptables rules to stop undesired connections
 
 
 # Install
