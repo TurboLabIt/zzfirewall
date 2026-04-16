@@ -214,21 +214,23 @@ function insertAfterIpsetRules()
   
   ## keep this as high as possible, so that we traverse less rules on access
   if [ "${ALLOW_WEBSERVER}" != 0 ]; then
-  
+
     MSG="🌎 Allow HTTP/HTTPS"
     fxMessage "$MSG"
     iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
-  fi
 
-  ## allow access even if ALLOW_WEBSERVER=0
-  for GEOALLOW_COUNTRY in "${GEOALLOW_WEB_COUNTRIES_ARRAY[@]}"; do
-    GEOALLOW_COUNTRY=$(echo "$GEOALLOW_COUNTRY" | xargs)
-    if [ -n "$GEOALLOW_COUNTRY" ]; then
-      MSG="🌍 Allow HTTP/HTTPS from ${GEOALLOW_COUNTRY}"
-      fxMessage "$MSG"
-      iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set "zzfw_GeoAllow_${GEOALLOW_COUNTRY}" src -j ACCEPT -m comment --comment "$MSG (zzfw)"
-    fi
-  done
+  else
+
+    ## allow access from specific countries even when ALLOW_WEBSERVER=0
+    for GEOALLOW_COUNTRY in "${GEOALLOW_WEB_COUNTRIES_ARRAY[@]}"; do
+      GEOALLOW_COUNTRY=$(echo "$GEOALLOW_COUNTRY" | xargs)
+      if [ -n "$GEOALLOW_COUNTRY" ]; then
+        MSG="🌍 Allow HTTP/HTTPS from ${GEOALLOW_COUNTRY}"
+        fxMessage "$MSG"
+        iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set "zzfw_GeoAllow_${GEOALLOW_COUNTRY}" src -j ACCEPT -m comment --comment "$MSG (zzfw)"
+      fi
+    done
+  fi
 
   if [ "${ALLOW_SECURE_IMAP}" != 0 ]; then
 
