@@ -59,12 +59,15 @@ fxTitle "⏬ Downloading Google IP list (complete)..."
 DOWNLOADED_FILE_IPLIST_GOOGLE_ALL=${DOWNLOADED_LIST_DIR}google.txt
 curl -Lo "${DOWNLOADED_FILE_IPLIST_GOOGLE_ALL}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/refs/heads/main/lists/autogen/google.txt
 
-IP_WHITELIST_ITALY_FULLPATH=${DOWNLOADED_LIST_DIR}italy.txt
-if [ ${GEOALLOW_WEB_NOT_BLOCKED_ITALY} != 0 ]; then
+IFS=',' read -ra GEOALLOW_WEB_COUNTRIES_ARRAY <<< "$GEOALLOW_WEB_COUNTRIES"
+for GEOALLOW_COUNTRY in "${GEOALLOW_WEB_COUNTRIES_ARRAY[@]}"; do
 
-  fxTitle "⏬ Downloading 🇮🇹 Italy IP list..."
-  curl -Lo "${IP_WHITELIST_ITALY_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/italy.txt
-fi
+  GEOALLOW_COUNTRY=$(echo "$GEOALLOW_COUNTRY" | xargs)
+  if [ -n "$GEOALLOW_COUNTRY" ]; then
+    fxTitle "⏬ Downloading ${GEOALLOW_COUNTRY} IP list for geo-allow..."
+    curl -Lo "${DOWNLOADED_LIST_DIR}geoallow-${GEOALLOW_COUNTRY}.txt" "https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/geos/${GEOALLOW_COUNTRY}.txt"
+  fi
+done
 
 
 ####################
@@ -218,12 +221,14 @@ function insertAfterIpsetRules()
   fi
 
   ## allow access even if ALLOW_WEBSERVER=0
-  if [ "${GEOALLOW_WEB_NOT_BLOCKED_ITALY}" != 0 ]; then
-
-    MSG="🇮🇹 Allow HTTP/HTTPS from Italy"
-    fxMessage "$MSG"
-    iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_GeoItaly src -j ACCEPT -m comment --comment "$MSG (zzfw)"
-  fi
+  for GEOALLOW_COUNTRY in "${GEOALLOW_WEB_COUNTRIES_ARRAY[@]}"; do
+    GEOALLOW_COUNTRY=$(echo "$GEOALLOW_COUNTRY" | xargs)
+    if [ -n "$GEOALLOW_COUNTRY" ]; then
+      MSG="🌍 Allow HTTP/HTTPS from ${GEOALLOW_COUNTRY}"
+      fxMessage "$MSG"
+      iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set "zzfw_GeoAllow_${GEOALLOW_COUNTRY}" src -j ACCEPT -m comment --comment "$MSG (zzfw)"
+    fi
+  done
 
   if [ "${ALLOW_SECURE_IMAP}" != 0 ]; then
 
@@ -276,7 +281,12 @@ function insertAfterIpsetRules()
 createIpSet zzfw_Whitelist "$IP_WHITELIST_FULLPATH"
 ## the server must be protected while we build the ipsets
 insertBeforeIpsetRules
-createIpSet zzfw_GeoItaly "$IP_WHITELIST_ITALY_FULLPATH"
+for GEOALLOW_COUNTRY in "${GEOALLOW_WEB_COUNTRIES_ARRAY[@]}"; do
+  GEOALLOW_COUNTRY=$(echo "$GEOALLOW_COUNTRY" | xargs)
+  if [ -n "$GEOALLOW_COUNTRY" ]; then
+    createIpSet "zzfw_GeoAllow_${GEOALLOW_COUNTRY}" "${DOWNLOADED_LIST_DIR}geoallow-${GEOALLOW_COUNTRY}.txt"
+  fi
+done
 insertAfterIpsetRules
 
 fxTitle "🧱 Intermediate status alpha"

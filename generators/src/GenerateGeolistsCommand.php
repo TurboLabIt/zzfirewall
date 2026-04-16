@@ -78,7 +78,10 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       "CO" => "south-america.txt", "PE" => "south-america.txt", "VE" => "south-america.txt",
 
       // ===  ITALY.TXT ===
-      'IT' => 'italy.txt'
+      'IT' => 'italy.txt',
+
+      // ===  SWITZERLAND.TXT ===
+      'CH' => 'switzerland.txt'
     ];
 
     // 💡 https://github.com/TurboLabIt/php-symfony-basecommand/blob/main/src/Traits/CliOptionsTrait.php
