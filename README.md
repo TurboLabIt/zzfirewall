@@ -1,54 +1,80 @@
 # 🔥🧱 zzfirewall 🧱🔥
 
-iptables rules to stop undesired connections
+iptables rules to stop undesired connections.
 
 
-# Install
+## Install
 
 Just execute:
 
 ````bash
-sudo apt install curl -y && curl -s https://raw.githubusercontent.com/TurboLabIt/zzfirewall/master/setup.sh | sudo bash
+sudo apt install curl -y && \
+  curl -s https://raw.githubusercontent.com/TurboLabIt/zzfirewall/master/setup.sh | sudo bash
 ````
 
 Now copy the provided sample configuration file (`zzfirewall.default.conf`) to your own `zzfirewall.conf` and set your preference:
 
 ````bash
-sudo cp /usr/local/turbolab.it/zzfirewall/zzfirewall.default.conf /etc/turbolab.it/zzfirewall.conf && sudo nano /etc/turbolab.it/zzfirewall.conf
+sudo cp /usr/local/turbolab.it/zzfirewall/zzfirewall.default.conf /etc/turbolab.it/zzfirewall.conf && \
+  sudo nano /etc/turbolab.it/zzfirewall.conf
 ````
 
 
-# Shields Up!
+## Shields Up!
 
 ````bash
 sudo zzfirewall
 ````
 
 
-# Restrict SSH access
+## Restrict SSH access
 
 If you want to limit SSH access to pre-approved hosts, create a file and add your IPs/DDNS (one per line):
 
 ````bash
-sudo nano /etc/turbolab.it/zzfirewall-whitelist.conf && sudo zzfirewall-whitelist-update
+sudo nano /etc/turbolab.it/zzfirewall-whitelist.conf && \
+  sudo zzfirewall-whitelist-update
 ````
 
 
-# On-the-fly IP whitelist
+## Geo-allow web access
+
+To allow HTTP(S) traffic from specific countries only, do this:
+
+````bash
+ALLOW_WEBSERVER=0
+GEOALLOW_WEB_COUNTRIES=italy,switzerland
+````
+
+
+## How to Cloudflare
+
+Just set:
+
+````bash
+ALLOW_WEBSERVER=0
+````
+
+All web traffic will be accepted through Cloudflare only.
+
+
+## On-the-fly IP whitelist
 
 ````bash
 sudo iptables -I "INPUT" -s "TRUSTED_IP_ADDRESS" -j ACCEPT
 ````
 
 
-# Emergency firewall reset
+## Emergency firewall reset
 
 ````bash
 sudo zzfirewall-reset
 ````
 
 
-# For the maintainers: update the lists
+----
+
+### For the maintainers: update the lists
 
 ````bash
 sudo zzfirewall-generate
