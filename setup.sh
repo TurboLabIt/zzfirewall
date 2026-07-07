@@ -31,4 +31,7 @@ if [ "$(hostname)" = "zane-boraso" ]; then
   cp "${INSTALL_DIR}generators/cron-maintainer" "/etc/cron.d/zzfirewall_maintainer"
 fi
 
+fxTitle "❤️‍🩹 Factory-resetting the firewall for a clean slate..."
+sudo bash ${INSTALL_DIR}${SCRIPT_NAME}-reset.sh
+
 sudo bash /usr/local/turbolab.it/bash-fx/setup/the-end.sh ${SCRIPT_NAME}
