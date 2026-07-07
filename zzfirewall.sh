@@ -22,7 +22,11 @@ else
 fi
 
 fxTitle "🧹 Removing ufw, iptables-persistent..."
-apt purge ufw iptables-persistent -y
+if dpkg -s ufw >/dev/null 2>&1 || dpkg -s iptables-persistent >/dev/null 2>&1; then
+  apt purge ufw iptables-persistent -y
+else
+  fxInfo "Not installed, skipping"
+fi
 
 
 fxTitle "🧹 Clear the log file..."
