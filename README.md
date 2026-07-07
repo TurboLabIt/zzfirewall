@@ -73,6 +73,8 @@ sudo iptables -I "INPUT" -s "TRUSTED_IP_ADDRESS" -j ACCEPT
 sudo zzfirewall-reset
 ````
 
+It wipes every iptables rule and every ipset on the box. If Docker is installed and running, it gets restarted automatically so it can rebuild its own iptables rules.
+
 
 ----
 

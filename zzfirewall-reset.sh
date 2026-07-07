@@ -13,24 +13,16 @@ fi
 fxHeader "❤️‍🩹 FIREWALL RESET"
 rootCheck
 
-if [ "$1" = "light" ]; then
-  LIGHT_MODE=1
-else
-  LIGHT_MODE=0
-fi
-
-if [ "$LIGHT_MODE" = 0 ]; then
-  fxTitle "🧹 Removing ufw, iptables-persistent..."
-  apt purge ufw iptables-persistent -y
-fi
+fxTitle "🧹 Removing ufw, iptables-persistent..."
+apt purge ufw iptables-persistent -y
 
 fxTitle "🔄 Restoring iptables to default..."
-iptables-save | awk '/^[*]/ { print $1 } 
+iptables-save | awk '/^[*]/ { print $1 }
                      /^:[A-Z]+ [^-]/ { print $1 " ACCEPT" ; }
                      /COMMIT/ { print $0; }' | iptables-restore
 
 
-if [ "$LIGHT_MODE" = 0 ] && [ ! -z "$(command -v ipset)" ]; then
+if [ ! -z "$(command -v ipset)" ]; then
 
   fxTitle "🧹 Remove all ipsets..."
   ipset flush
@@ -39,19 +31,27 @@ if [ "$LIGHT_MODE" = 0 ] && [ ! -z "$(command -v ipset)" ]; then
   # https://github.com/weaveworks/weave/issues/3847
   sleep 2
   ipset destroy
-  
+
   if [ $? -ne 0 ]; then
     fxMessage "Failed - retrying..."
     sleep 3
     ipset destroy
   fi
- 
+
 fi
+
+
+if [ ! -z "$(command -v docker)" ] && systemctl is-active --quiet docker; then
+
+  fxTitle "🐳 Restarting Docker to rebuild its own iptables rules..."
+  systemctl restart docker
+fi
+
 
 fxTitle "🧱 Current status"
 iptables -nL
 
-if [ "$LIGHT_MODE" = 0 ] && [ ! -z "$(command -v ipset)" ]; then
+if [ ! -z "$(command -v ipset)" ]; then
   echo ""
   ipset list
 fi

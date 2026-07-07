@@ -6,17 +6,23 @@ fxHeader "🔥🧱 zzfirewall 🧱🔥"
 rootCheck
 fxConfigLoader
 
+## exported so that PRE_DROP_SCRIPT can add its custom rules to the zzfirewall chain
+export ZZFW_CHAIN=ZZFIREWALL
+
 fxTitle "📦 Checking packages...."
 if [ -z "$(command -v curl)" ] || [ -z "$(command -v iptables)" ] || [ -z "$(command -v ipset)" ]; then
 
   fxMessage "Installing packages..."
   apt update
   apt install iptables ipset curl -y
-  
+
 else
 
   fxMessage "✔ iptables and ipset are already installed"
 fi
+
+fxTitle "🧹 Removing ufw, iptables-persistent..."
+apt purge ufw iptables-persistent -y
 
 
 fxTitle "🧹 Clear the log file..."
@@ -149,7 +155,40 @@ if [ "${GEOBLOCK}" != 0 ] && [ ${GEOBLOCK_SOUTH_AMERICA} != 0 ]; then
 fi
 
 
-bash ${SCRIPT_DIR}zzfirewall-reset.sh
+function zzfwReset()
+{
+  fxTitle "❤️‍🩹 Reset the ${ZZFW_CHAIN} chain..."
+
+  fxIptablesCreateChainIfNotExists "$ZZFW_CHAIN" silent
+
+  iptables -C INPUT -j "$ZZFW_CHAIN" -m comment --comment "(zzfw)" >/dev/null 2>&1
+  INPUT_CHAIN_CONTAINS=$?
+
+  if [ "$INPUT_CHAIN_CONTAINS" != 0 ]; then
+
+    fxMessage "🔗 Hooking ${ZZFW_CHAIN} to INPUT"
+    iptables -A INPUT -j "$ZZFW_CHAIN" -m comment --comment "(zzfw)"
+  fi
+
+  iptables -P INPUT ACCEPT
+  iptables -F "$ZZFW_CHAIN"
+}
+
+
+function zzfwFlushIpsets()
+{
+  fxTitle "🧹 Flush every zzfw_* ipset..."
+
+  local SET_NAME
+  for SET_NAME in $(ipset list -n | grep '^zzfw_'); do
+    fxMessage "🧹 ${SET_NAME}"
+    ipset flush "$SET_NAME"
+  done
+}
+
+
+zzfwReset
+zzfwFlushIpsets
 
 
 function createIpSet()
@@ -164,7 +203,7 @@ function createIpSet()
     local FIRSTCHAR="${line:0:1}"
     if [ "$FIRSTCHAR" != "#" ] && [ "$FIRSTCHAR" != "" ]; then
       echo "Add: $line" >> "${IP_LOG_FILE}"
-      ipset add $1 $line
+      ipset add $1 $line -exist
     fi
   done < "$2"
 }
@@ -176,34 +215,34 @@ function insertBeforeIpsetRules()
 
   MSG="🏡 Allow from loopback"
   fxMessage "$MSG"
-  iptables -A INPUT -i lo -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  iptables -A "$ZZFW_CHAIN" -i lo -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   MSG="🎅 Drop XMAS packets"
   fxMessage "$MSG"
-  iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP -m comment --comment "$MSG (zzfw)"
+  iptables -A "$ZZFW_CHAIN" -p tcp --tcp-flags ALL ALL -j DROP -m comment --comment "$MSG (zzfw)"
 
   MSG="💩 Drop null packets"
   fxMessage "$MSG"
-  iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP -m comment --comment "$MSG (zzfw)"
+  iptables -A "$ZZFW_CHAIN" -p tcp --tcp-flags ALL NONE -j DROP -m comment --comment "$MSG (zzfw)"
 
   if [ "${ALLOW_FROM_LAN}" = 1 ]; then
 
     MSG="🏡 Allow connections from LAN"
     fxMessage "$MSG"
-    iptables -A INPUT -s 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+    iptables -A "$ZZFW_CHAIN" -s 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
 
   ## https://serverfault.com/q/1128226/188704
   # Keep this before the blocklists, otherwise the system can't connect out to blocked addresses (e.g.: Google Cloud)
   MSG="📤 Allow EST,REL"
   fxMessage "$MSG"
-  iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  iptables -A "$ZZFW_CHAIN" -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   if [ "${ALLOW_WEBSERVER_FROM_WHITELIST}" != 0 ]; then
 
     MSG="👐 HTTP(s) whitelist ipset"
     fxMessage "$MSG"
-    iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT -m comment --comment "$MSG (zzfw)"
+    iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
 }
 
@@ -217,7 +256,7 @@ function insertAfterIpsetRules()
 
     MSG="🌎 Allow HTTP/HTTPS"
     fxMessage "$MSG"
-    iptables -A INPUT -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+    iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   else
 
@@ -227,7 +266,7 @@ function insertAfterIpsetRules()
       if [ -n "$GEOALLOW_COUNTRY" ]; then
         MSG="🌍 Allow HTTP/HTTPS from ${GEOALLOW_COUNTRY}"
         fxMessage "$MSG"
-        iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set "zzfw_GeoAllow_${GEOALLOW_COUNTRY}" src -j ACCEPT -m comment --comment "$MSG (zzfw)"
+        iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 80,443 -m set --match-set "zzfw_GeoAllow_${GEOALLOW_COUNTRY}" src -j ACCEPT -m comment --comment "$MSG (zzfw)"
       fi
     done
   fi
@@ -236,47 +275,48 @@ function insertAfterIpsetRules()
 
     MSG="📧 Allow secure IMAP over TLS/SSL"
     fxMessage "$MSG"
-    iptables -A INPUT -p tcp -m multiport --dport 993 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+    iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 993 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
 
   if [ "${ALLOW_SECURE_POP3}" != 0 ]; then
 
     MSG="📧 Allow secure POP3 over TLS/SSL"
     fxMessage "$MSG"
-    iptables -A INPUT -p tcp -m multiport --dport 995 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+    iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 995 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
 
   MSG="🐧 Allow SSH"
   fxMessage "$MSG"
-  iptables -A INPUT -p tcp --dport 22 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  iptables -A "$ZZFW_CHAIN" -p tcp --dport 22 -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   if [ "${ALLOW_FTP}" != 0 ]; then
 
     MSG="📁 Allow FTP"
     fxMessage "$MSG"
-    iptables -A INPUT -p tcp -m multiport --dport 20,21,990,2121:2221 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+    iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 20,21,990,2121:2221 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
 
   if [ "${ALLOW_SMTP}" != 0 ]; then
   
     MSG="💌 Allow SMTP"
     fxMessage "$MSG"
-    iptables -A INPUT -p tcp --dport 25 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+    iptables -A "$ZZFW_CHAIN" -p tcp --dport 25 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
   
   if [ ! -z "${PRE_DROP_SCRIPT}" ]; then
   
     fxTitle "💨 Running ${PRE_DROP_SCRIPT}..."
+    ## custom rules must target the exported $ZZFW_CHAIN: rules appended to INPUT would sit below the jump, never reached
     bash "$PRE_DROP_SCRIPT"
   fi
   
   MSG="🏓 Allow ICMP (ping)"
   fxMessage "$MSG"
-  iptables -A INPUT -p icmp -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  iptables -A "$ZZFW_CHAIN" -p icmp -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   MSG="🛑 Drop everything else"
   fxTitle "$MSG"
-  iptables -A INPUT -j DROP -m comment --comment "$MSG (zzfw)"
+  iptables -A "$ZZFW_CHAIN" -j DROP -m comment --comment "$MSG (zzfw)"
 }
 
 
@@ -310,22 +350,22 @@ createIpSet zzfw_GeoSouthAmerica "$DOWNLOADED_FILE_IPLIST_GEO_SOUTH_AMERICA"
 fxTitle "🧹 Delete the temp folder..."
 rm -rf $DOWNLOADED_LIST_DIR
 
-bash ${SCRIPT_DIR}zzfirewall-reset.sh light
+zzfwReset
 insertBeforeIpsetRules
 
 
 fxTitle "🚪Insert ipset rules"
 fxMessage "🛑 Enable ipset zzfw_Blacklist..."
-iptables -A INPUT -m set --match-set zzfw_Blacklist src -j DROP -m comment --comment "🛑 Blacklist (zzfw)"
+iptables -A "$ZZFW_CHAIN" -m set --match-set zzfw_Blacklist src -j DROP -m comment --comment "🛑 Blacklist (zzfw)"
 
 if [ "${ALLOW_GOOGLE_CLOUD}" != 1 ]; then
 
   fxMessage "🛑 Enable ipset zzfw_GoogleCloud..."
-  iptables -A INPUT -m set --match-set zzfw_GoogleCloud src -j DROP -m comment --comment "🛑 Google Cloud (zzfw)"
+  iptables -A "$ZZFW_CHAIN" -m set --match-set zzfw_GoogleCloud src -j DROP -m comment --comment "🛑 Google Cloud (zzfw)"
 fi
 
 fxMessage "🟢 Enable ipset zzfw_Google..."
-iptables -A INPUT -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_GoogleAll src -j ACCEPT -m comment --comment "🟢 Google (zzfw)"
+iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_GoogleAll src -j ACCEPT -m comment --comment "🟢 Google (zzfw)"
 
 
 function addDropRule()
@@ -335,7 +375,7 @@ function addDropRule()
   fi
 
   fxMessage "🛑 Enable ipset ${1}..."
-  iptables -A INPUT -m set --match-set ${1} src -j DROP
+  iptables -A "$ZZFW_CHAIN" -m set --match-set ${1} src -j DROP -m comment --comment "🛑 ${1} (zzfw)"
 }
 
 addDropRule zzfw_GeoArab "${GEOBLOCK_ARAB}"

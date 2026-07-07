@@ -34,8 +34,9 @@ if [ -z "$IP_ADDRESS" ]; then
 fi
 
 
-CHAIN_NAME="👔_ZZFW_WHITELISTER"
+CHAIN_NAME="ZZFIREWALL_WHITELISTER"
 CHAIN_REFERENCE_COMMENT="(zzfw)"
+MAIN_CHAIN_NAME="ZZFIREWALL"
 
 fxIptablesCreateChainIfNotExists "$CHAIN_NAME"
 
@@ -121,7 +122,7 @@ elif [ "$EMPTY_WHITELISTER" = 0 ] && [ "$LIMIT_SSH_TO_WHITELISTED" = 1 ] ; then
 
   fxTitle "🛡️ Limiting SSH to whitelisted origins..."
   MSG="🐧 Allow SSH"
-  iptables -D INPUT -p tcp --dport 22 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  iptables -D "$MAIN_CHAIN_NAME" -p tcp --dport 22 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   
 elif [ "$EMPTY_WHITELISTER" = 0 ] && [ "$LIMIT_SSH_TO_WHITELISTED" = 0 ] ; then
 
