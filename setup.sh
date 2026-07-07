@@ -25,13 +25,15 @@ if [ ! -f "/etc/letsencrypt/renewal-hooks/" ]; then
   fxLink "${INSTALL_DIR}hooks/lets-encrypt-web-90-post.sh" "/etc/letsencrypt/renewal-hooks/post/zzfirewall-web-close.sh"
 fi
 
+
 ## maintainer stuff
 if [ "$(hostname)" = "zane-boraso" ]; then
   fxLinkBin ${INSTALL_DIR}generators/generate-lists.sh ${SCRIPT_NAME}-generate
   cp "${INSTALL_DIR}generators/cron-maintainer" "/etc/cron.d/zzfirewall_maintainer"
 fi
 
-fxTitle "❤️‍🩹 Factory-resetting the firewall for a clean slate..."
+
 sudo bash ${INSTALL_DIR}${SCRIPT_NAME}-reset.sh
+
 
 sudo bash /usr/local/turbolab.it/bash-fx/setup/the-end.sh ${SCRIPT_NAME}
