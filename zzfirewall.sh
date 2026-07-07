@@ -12,13 +12,13 @@ export ZZFW_CHAIN=ZZFIREWALL
 fxTitle "📦 Checking packages...."
 if [ -z "$(command -v curl)" ] || [ -z "$(command -v iptables)" ] || [ -z "$(command -v ipset)" ]; then
 
-  fxMessage "Installing packages..."
+  fxInfo "Installing packages..."
   apt update
   apt install iptables ipset curl -y
 
 else
 
-  fxMessage "✔ iptables and ipset are already installed"
+  fxOK "iptables and ipset are already installed"
 fi
 
 fxTitle "🧹 Removing ufw, iptables-persistent..."
@@ -166,7 +166,7 @@ function zzfwReset()
 
   if [ "$INPUT_CHAIN_CONTAINS" != 0 ]; then
 
-    fxMessage "🔗 Hooking ${ZZFW_CHAIN} to INPUT"
+    fxInfo "🔗 Hooking ${ZZFW_CHAIN} to INPUT"
     iptables -A INPUT -j "$ZZFW_CHAIN" -m comment --comment "(zzfw)"
   fi
 
@@ -181,7 +181,7 @@ function zzfwFlushIpsets()
 
   local SET_NAME
   for SET_NAME in $(ipset list -n | grep '^zzfw_'); do
-    fxMessage "🧹 ${SET_NAME}"
+    fxInfo "🧹 ${SET_NAME}"
     ipset flush "$SET_NAME"
   done
 }
@@ -214,34 +214,34 @@ function insertBeforeIpsetRules()
   fxTitle "🚪Insert pre-ipset rules"
 
   MSG="🏡 Allow from loopback"
-  fxMessage "$MSG"
+  echo "$MSG"
   iptables -A "$ZZFW_CHAIN" -i lo -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   MSG="🎅 Drop XMAS packets"
-  fxMessage "$MSG"
+  echo "$MSG"
   iptables -A "$ZZFW_CHAIN" -p tcp --tcp-flags ALL ALL -j DROP -m comment --comment "$MSG (zzfw)"
 
   MSG="💩 Drop null packets"
-  fxMessage "$MSG"
+  echo "$MSG"
   iptables -A "$ZZFW_CHAIN" -p tcp --tcp-flags ALL NONE -j DROP -m comment --comment "$MSG (zzfw)"
 
   if [ "${ALLOW_FROM_LAN}" = 1 ]; then
 
     MSG="🏡 Allow connections from LAN"
-    fxMessage "$MSG"
+    echo "$MSG"
     iptables -A "$ZZFW_CHAIN" -s 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
 
   ## https://serverfault.com/q/1128226/188704
   # Keep this before the blocklists, otherwise the system can't connect out to blocked addresses (e.g.: Google Cloud)
   MSG="📤 Allow EST,REL"
-  fxMessage "$MSG"
+  echo "$MSG"
   iptables -A "$ZZFW_CHAIN" -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   if [ "${ALLOW_WEBSERVER_FROM_WHITELIST}" != 0 ]; then
 
     MSG="👐 HTTP(s) whitelist ipset"
-    fxMessage "$MSG"
+    echo "$MSG"
     iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Whitelist src -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
 }
@@ -255,7 +255,7 @@ function insertAfterIpsetRules()
   if [ "${ALLOW_WEBSERVER}" != 0 ]; then
 
     MSG="🌎 Allow HTTP/HTTPS"
-    fxMessage "$MSG"
+    echo "$MSG"
     iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 80,443 -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   else
@@ -265,7 +265,7 @@ function insertAfterIpsetRules()
       GEOALLOW_COUNTRY=$(echo "$GEOALLOW_COUNTRY" | xargs)
       if [ -n "$GEOALLOW_COUNTRY" ]; then
         MSG="🌍 Allow HTTP/HTTPS from ${GEOALLOW_COUNTRY}"
-        fxMessage "$MSG"
+        echo "$MSG"
         iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 80,443 -m set --match-set "zzfw_GeoAllow_${GEOALLOW_COUNTRY}" src -j ACCEPT -m comment --comment "$MSG (zzfw)"
       fi
     done
@@ -274,32 +274,32 @@ function insertAfterIpsetRules()
   if [ "${ALLOW_SECURE_IMAP}" != 0 ]; then
 
     MSG="📧 Allow secure IMAP over TLS/SSL"
-    fxMessage "$MSG"
+    echo "$MSG"
     iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 993 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
 
   if [ "${ALLOW_SECURE_POP3}" != 0 ]; then
 
     MSG="📧 Allow secure POP3 over TLS/SSL"
-    fxMessage "$MSG"
+    echo "$MSG"
     iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 995 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
 
   MSG="🐧 Allow SSH"
-  fxMessage "$MSG"
+  echo "$MSG"
   iptables -A "$ZZFW_CHAIN" -p tcp --dport 22 -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   if [ "${ALLOW_FTP}" != 0 ]; then
 
     MSG="📁 Allow FTP"
-    fxMessage "$MSG"
+    echo "$MSG"
     iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 20,21,990,2121:2221 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
 
   if [ "${ALLOW_SMTP}" != 0 ]; then
   
     MSG="💌 Allow SMTP"
-    fxMessage "$MSG"
+    echo "$MSG"
     iptables -A "$ZZFW_CHAIN" -p tcp --dport 25 -j ACCEPT -m comment --comment "$MSG (zzfw)"
   fi
   
@@ -311,7 +311,7 @@ function insertAfterIpsetRules()
   fi
   
   MSG="🏓 Allow ICMP (ping)"
-  fxMessage "$MSG"
+  echo "$MSG"
   iptables -A "$ZZFW_CHAIN" -p icmp -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   MSG="🛑 Drop everything else"
@@ -354,17 +354,16 @@ zzfwReset
 insertBeforeIpsetRules
 
 
-fxTitle "🚪Insert ipset rules"
-fxMessage "🛑 Enable ipset zzfw_Blacklist..."
+fxTitle "🛑 Enable ipset zzfw_Blacklist..."
 iptables -A "$ZZFW_CHAIN" -m set --match-set zzfw_Blacklist src -j DROP -m comment --comment "🛑 Blacklist (zzfw)"
 
 if [ "${ALLOW_GOOGLE_CLOUD}" != 1 ]; then
 
-  fxMessage "🛑 Enable ipset zzfw_GoogleCloud..."
+  fxTitle "🛑 Enable ipset zzfw_GoogleCloud..."
   iptables -A "$ZZFW_CHAIN" -m set --match-set zzfw_GoogleCloud src -j DROP -m comment --comment "🛑 Google Cloud (zzfw)"
 fi
 
-fxMessage "🟢 Enable ipset zzfw_Google..."
+fxTitle "🟢 Enable ipset zzfw_Google..."
 iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_GoogleAll src -j ACCEPT -m comment --comment "🟢 Google (zzfw)"
 
 
@@ -374,7 +373,7 @@ function addDropRule()
     return 0
   fi
 
-  fxMessage "🛑 Enable ipset ${1}..."
+  echo "🛑 Enable ipset ${1}..."
   iptables -A "$ZZFW_CHAIN" -m set --match-set ${1} src -j DROP -m comment --comment "🛑 ${1} (zzfw)"
 }
 
@@ -393,7 +392,7 @@ bash "${SCRIPT_DIR}whitelister/whitelister.sh"
 fxTitle "🍃 Looking for pure-ftpd..."
 if [ -d /etc/pure-ftpd/conf/ ]; then
   
-  fxMessage "pure-ftpd found! Updating PassivePortRange..."
+  fxOK "pure-ftpd found! Updating PassivePortRange..."
   rm -f /etc/pure-ftpd/conf/PassivePortRange
   
   if [ -f "/usr/local/turbolab.it/webstackup/config/pure-ftpd/PassivePortRange" ]; then
@@ -411,7 +410,7 @@ if [ -d /etc/pure-ftpd/conf/ ]; then
   
 else
 
-  fxMessage "pure-ftpd not found. No PassivePortRange update"
+  fxInfo "pure-ftpd not found. No PassivePortRange update"
 fi
 
 
