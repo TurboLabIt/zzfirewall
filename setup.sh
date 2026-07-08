@@ -33,7 +33,10 @@ if [ "$(hostname)" = "zane-boraso" ]; then
 fi
 
 
-sudo bash ${INSTALL_DIR}${SCRIPT_NAME}-reset.sh
+## factory-reset iptables only if zzfirewall isn't active yet
+if ! sudo iptables -w -nL ZZFIREWALL >/dev/null 2>&1; then
+  sudo bash ${INSTALL_DIR}${SCRIPT_NAME}-reset.sh
+fi
 
 
 sudo bash /usr/local/turbolab.it/bash-fx/setup/the-end.sh ${SCRIPT_NAME}
