@@ -67,6 +67,17 @@ sudo iptables -I "INPUT" -s "TRUSTED_IP_ADDRESS" -j ACCEPT
 ````
 
 
+## Database-only, LAN-only server 
+
+````bash
+## Database-only, LAN-only server
+ALLOW_WEBSERVER=0
+ALLOW_WEBSERVER_FROM_WHITELIST=0
+ALLOW_FTP=0
+GEOBLOCK=0
+````
+
+
 ## Emergency firewall reset
 
 ````bash
