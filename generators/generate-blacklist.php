@@ -13,6 +13,15 @@ echo "⚙️ Writing the file to $filePath..." . PHP_EOL;
 file_put_contents($filePath, $txtGoogleCloud);
 
 
+const CLAUDE_LIST_URL = 'https://claude.com/crawling/bots.json';
+echo "⚙️ Building Claude (Anthropic) list from " . CLAUDE_LIST_URL . "..." . PHP_EOL;
+$txtClaude = implode(PHP_EOL, getGoogleIpList(CLAUDE_LIST_URL) ) . PHP_EOL;
+
+$filePath = OUT_PATH . 'claude.txt';
+echo "⚙️ Writing the file to $filePath..." . PHP_EOL;
+file_put_contents($filePath, $txtClaude);
+
+
 /**
  * Banner
  * ======
