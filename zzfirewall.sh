@@ -364,11 +364,9 @@ zzfwReset
 insertBeforeIpsetRules
 
 
-fxTitle "🛑 Enable ipset zzfw_Blacklist..."
-iptables -A "$ZZFW_CHAIN" -m set --match-set zzfw_Blacklist src -j DROP -m comment --comment "🛑 Blacklist (zzfw)"
-
-## keep zzfw_Claude before the Google rules: most Claude IPs fall inside Google Cloud ranges,
-## so a later rule would be shadowed by zzfw_GoogleCloud (DROP) / zzfw_GoogleAll (ACCEPT)
+## keep zzfw_Claude before zzfw_Blacklist (ALLOW_CLAUDE=1 must win even if a Claude IP gets blacklisted)
+## and before the Google rules (most Claude IPs fall inside Google Cloud ranges, so a later rule
+## would be shadowed by zzfw_GoogleCloud (DROP) / zzfw_GoogleAll (ACCEPT))
 if [ "${ALLOW_CLAUDE}" = 1 ]; then
 
   fxTitle "🟢 Enable ipset zzfw_Claude (HTTP/HTTPS only)..."
@@ -379,6 +377,9 @@ else
   fxTitle "🛑 Enable ipset zzfw_Claude..."
   iptables -A "$ZZFW_CHAIN" -m set --match-set zzfw_Claude src -j DROP -m comment --comment "🛑 Claude (zzfw)"
 fi
+
+fxTitle "🛑 Enable ipset zzfw_Blacklist..."
+iptables -A "$ZZFW_CHAIN" -m set --match-set zzfw_Blacklist src -j DROP -m comment --comment "🛑 Blacklist (zzfw)"
 
 if [ "${ALLOW_GOOGLE_CLOUD}" != 1 ]; then
 
