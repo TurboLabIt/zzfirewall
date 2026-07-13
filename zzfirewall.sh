@@ -112,6 +112,11 @@ if [ "${ALLOW_GOOGLE_CLOUD}" != 1 ]; then
   curl -Lo "${DOWNLOADED_FILE_IPLIST_GOOGLE_CLOUD}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/refs/heads/main/lists/autogen/google-cloud.txt
 fi
 
+## always downloaded: the zzfw_Claude ipset is used both by ALLOW_CLAUDE=1 (ACCEPT) and ALLOW_CLAUDE=0 (DROP)
+fxTitle "⏬ Downloading Claude (Anthropic) IP list..."
+DOWNLOADED_FILE_IPLIST_CLAUDE=${DOWNLOADED_LIST_DIR}claude.txt
+curl -Lo "${DOWNLOADED_FILE_IPLIST_CLAUDE}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/refs/heads/main/lists/autogen/claude.txt
+
 
 ##################
 # 🔴 GEOBLOCK 🔴 #
@@ -342,6 +347,7 @@ iptables -nL
 createIpSet zzfw_Blacklist "$IP_BLACKLIST_FULLPATH"
 createIpSet zzfw_GoogleCloud "$DOWNLOADED_FILE_IPLIST_GOOGLE_CLOUD"
 createIpSet zzfw_GoogleAll "$DOWNLOADED_FILE_IPLIST_GOOGLE_ALL"
+createIpSet zzfw_Claude "$DOWNLOADED_FILE_IPLIST_CLAUDE"
 
 createIpSet zzfw_GeoArab "$DOWNLOADED_FILE_IPLIST_GEO_ARAB"
 createIpSet zzfw_GeoChina "$DOWNLOADED_FILE_IPLIST_GEO_CHINA"
@@ -360,6 +366,19 @@ insertBeforeIpsetRules
 
 fxTitle "🛑 Enable ipset zzfw_Blacklist..."
 iptables -A "$ZZFW_CHAIN" -m set --match-set zzfw_Blacklist src -j DROP -m comment --comment "🛑 Blacklist (zzfw)"
+
+## keep zzfw_Claude before the Google rules: most Claude IPs fall inside Google Cloud ranges,
+## so a later rule would be shadowed by zzfw_GoogleCloud (DROP) / zzfw_GoogleAll (ACCEPT)
+if [ "${ALLOW_CLAUDE}" = 1 ]; then
+
+  fxTitle "🟢 Enable ipset zzfw_Claude (HTTP/HTTPS only)..."
+  iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Claude src -j ACCEPT -m comment --comment "🟢 Claude (zzfw)"
+
+else
+
+  fxTitle "🛑 Enable ipset zzfw_Claude..."
+  iptables -A "$ZZFW_CHAIN" -m set --match-set zzfw_Claude src -j DROP -m comment --comment "🛑 Claude (zzfw)"
+fi
 
 if [ "${ALLOW_GOOGLE_CLOUD}" != 1 ]; then
 
