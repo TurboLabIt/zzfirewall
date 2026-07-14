@@ -369,7 +369,6 @@ insertBeforeIpsetRules
 ## would be shadowed by zzfw_GoogleCloud (DROP) / zzfw_GoogleAll (ACCEPT))
 if [ "${ALLOW_CLAUDE}" = 1 ]; then
 
-  CLAUDE_MAX_CONN_PER_SEC=${CLAUDE_MAX_CONN_PER_SEC:-5}
   CLAUDE_BURST=$(( CLAUDE_MAX_CONN_PER_SEC * 2 ))
 
   fxTitle "🟢 Enable ipset zzfw_Claude (HTTP/HTTPS only, ${CLAUDE_MAX_CONN_PER_SEC} new conn/s, ${CLAUDE_BURST} concurrent)..."
