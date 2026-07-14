@@ -369,8 +369,24 @@ insertBeforeIpsetRules
 ## would be shadowed by zzfw_GoogleCloud (DROP) / zzfw_GoogleAll (ACCEPT))
 if [ "${ALLOW_CLAUDE}" = 1 ]; then
 
-  fxTitle "🟢 Enable ipset zzfw_Claude (HTTP/HTTPS only)..."
-  iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Claude src -j ACCEPT -m comment --comment "🟢 Claude (zzfw)"
+  CLAUDE_MAX_CONN_PER_SEC=${CLAUDE_MAX_CONN_PER_SEC:-5}
+  CLAUDE_BURST=$(( CLAUDE_MAX_CONN_PER_SEC * 2 ))
+
+  fxTitle "🟢 Enable ipset zzfw_Claude (HTTP/HTTPS only, ${CLAUDE_MAX_CONN_PER_SEC} new conn/s, ${CLAUDE_BURST} concurrent)..."
+
+  ## both limits are aggregate: they apply to all the Claude IPs combined, not to each IP
+  iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Claude src \
+    -m conntrack --ctstate NEW -m connlimit --connlimit-above ${CLAUDE_BURST} --connlimit-mask 0 \
+    -j DROP -m comment --comment "🛑 Claude, ${CLAUDE_BURST}+ concurrent conn (zzfw)"
+
+  ## --ctstate NEW: only new connections count against the limit (established traffic is accepted earlier in the chain)
+  iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Claude src \
+    -m conntrack --ctstate NEW -m limit --limit ${CLAUDE_MAX_CONN_PER_SEC}/second --limit-burst ${CLAUDE_BURST} \
+    -j ACCEPT -m comment --comment "🟢 Claude, max ${CLAUDE_MAX_CONN_PER_SEC} conn/s (zzfw)"
+
+  ## over-limit traffic must be dropped here: if it fell through, 216.73.216.0/22 (not a Google Cloud IP)
+  ## would reach the ALLOW_WEBSERVER ACCEPT, defeating the limits
+  iptables -A "$ZZFW_CHAIN" -m set --match-set zzfw_Claude src -j DROP -m comment --comment "🛑 Claude, over-limit (zzfw)"
 
 else
 
