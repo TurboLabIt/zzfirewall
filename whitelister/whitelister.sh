@@ -122,7 +122,17 @@ elif [ "$EMPTY_WHITELISTER" = 0 ] && [ "$LIMIT_SSH_TO_WHITELISTED" = 1 ] ; then
 
   fxTitle "🛡️ Limiting SSH to whitelisted origins..."
   MSG="🐧 Allow SSH"
-  iptables -D "$MAIN_CHAIN_NAME" -p tcp --dport 22 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  iptables -C "$MAIN_CHAIN_NAME" -p tcp --dport 22 -j ACCEPT -m comment --comment "$MSG (zzfw)" >/dev/null 2>&1
+  ALLOW_SSH_RULE_EXISTS=$?
+
+  if [ "$ALLOW_SSH_RULE_EXISTS" = 0 ]; then
+
+    iptables -D "$MAIN_CHAIN_NAME" -p tcp --dport 22 -j ACCEPT -m comment --comment "$MSG (zzfw)"
+    fxMessage "🔒 Global \"$MSG\" rule removed"
+  else
+
+    fxMessage "✔️ Already limited: no global \"$MSG\" rule in $MAIN_CHAIN_NAME"
+  fi
   
 elif [ "$EMPTY_WHITELISTER" = 0 ] && [ "$LIMIT_SSH_TO_WHITELISTED" = 0 ] ; then
 
