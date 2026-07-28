@@ -268,11 +268,9 @@
 212.87.218.43
 216.38.6.137
 
-## Crawler
-208.84.102.225
-
 ## AS22295 - ADVIN - Advin Services LLC  2026-07-28
 # announced prefixes from https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS22295
+# supersedes the single "Crawler" IP 208.84.102.225, now covered by 208.84.102.0/24
 23.137.104.0/24
 23.137.105.0/24
 65.110.40.0/24
@@ -286,3 +284,20 @@
 208.84.100.0/24
 208.84.101.0/24
 208.84.102.0/24
+
+## AS206216 - ADVIN-AS Advin Services LLC  2026-07-28
+# sibling ASN of AS22295, same company, adjacent ranges
+# announced prefixes from https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS206216
+45.8.22.0/24
+142.248.82.0/24
+142.248.83.0/24
+160.187.210.0/23
+170.205.29.0/24
+170.205.30.0/24
+170.205.31.0/24
+185.128.227.0/24
+193.160.32.0/24
+204.10.194.0/24
+207.241.172.0/24
+208.84.103.0/24
+212.193.3.0/24
