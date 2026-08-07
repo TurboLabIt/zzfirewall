@@ -8,6 +8,63 @@ rootCheck
 fxConfigLoader
 showPHPVer
 
+GIT_REPO_SSH_URL=git@github.com:TurboLabIt/zzfirewall.git
+GIT_KEY_NOT_OK_TIP="Generate a key with sudo ssh-keygen -t ed25519 -f /root/.ssh/id_ed25519 and add /root/.ssh/id_ed25519.pub to https://github.com/TurboLabIt/zzfirewall/settings/keys as a deploy key, with 'Allow write access' ticked"
+
+
+## it installs jq too, which we need later on for the lists as well
+fxSshSetKnownHosts
+
+
+fxTitle "☁️ Switching the git remote to SSH..."
+if [ "$(git -C "${PROJECT_DIR}" remote get-url origin)" = "${GIT_REPO_SSH_URL}" ]; then
+
+  fxOK "The git remote is already ##${GIT_REPO_SSH_URL}##"
+
+else
+
+  git -C "${PROJECT_DIR}" remote set-url origin "${GIT_REPO_SSH_URL}"
+  fxOK "The git remote is now ##${GIT_REPO_SSH_URL}##"
+fi
+
+
+fxTitle "🔐 Checking the SSH write access to the repo..."
+## --dry-run on a would-be-new branch: it never really creates it and it can't fail
+## for non-fast-forward reasons, so a failure here means "no write access", full stop.
+## BatchMode + SSH_ASKPASS_REQUIRE: never ever prompt, or the cron run would hang forever
+GIT_WRITE_ACCESS_CHECK=$( \
+  SSH_ASKPASS_REQUIRE=never GIT_SSH_COMMAND="ssh -o BatchMode=yes" \
+  git -C "${PROJECT_DIR}" push --dry-run origin HEAD:refs/heads/zzfirewall-write-access-check 2>&1)
+
+GIT_WRITE_ACCESS_CHECK_RESULT=$?
+
+if [ "${GIT_WRITE_ACCESS_CHECK_RESULT}" != 0 ]; then
+
+  echo "${GIT_WRITE_ACCESS_CHECK}"
+  fxCatastrophicError "$(whoami) has no SSH write access to ${GIT_REPO_SSH_URL}! ${GIT_KEY_NOT_OK_TIP}"
+fi
+
+fxOK "$(whoami) has SSH write access to ${GIT_REPO_SSH_URL}"
+
+
+fxTitle "📥 Unshallowing the repo..."
+if [ "$(git -C "${PROJECT_DIR}" rev-parse --is-shallow-repository)" = "true" ]; then
+
+  git -C "${PROJECT_DIR}" fetch --unshallow
+  fxOK "The repo is now complete"
+
+else
+
+  fxOK "The repo is already complete"
+fi
+
+
+fxTitle "🪪 Setting the git commit identity..."
+git -C "${PROJECT_DIR}" config user.name "zzfirewall-maintainer"
+git -C "${PROJECT_DIR}" config user.email "zzfirewall@turbolab.it"
+fxOK "$(git -C "${PROJECT_DIR}" config user.name) <$(git -C "${PROJECT_DIR}" config user.email)>"
+
+
 fxTitle "🔧 Checking maintainer keys..."
 KEY_NOT_SET_TIP="Set it in sudo nano /etc/turbolab.it/zzfirewall.conf , see https://github.com/TurboLabIt/zzfirewall/blob/main/zzfirewall.default.conf"
 
@@ -28,10 +85,16 @@ git -C "/usr/local/turbolab.it/zzfirewall/" pull
 
 
 fxTitle "📂 Setting up the vendor directory for composer..."
-EXPECTED_USER=$(logname)
+EXPECTED_USER=$(logname 2>/dev/null)
+
+if [ -z "${EXPECTED_USER}" ]; then
+  EXPECTED_USER=root
+fi
+
+fxOK "EXPECTED_USER is ##${EXPECTED_USER}##"
 VENDOR_DIR=/usr/local/turbolab.it/zzfirewall/generators/vendor/
 mkdir -p "${VENDOR_DIR}"
-chown $(logname):$(logname) "${VENDOR_DIR}" -R
+chown ${EXPECTED_USER}:${EXPECTED_USER} "${VENDOR_DIR}" -R
 chmod ugo= "${VENDOR_DIR}" -R
 chmod u=rwX "${VENDOR_DIR}" -R
 COMPOSER_JSON_FULLPATH=/usr/local/turbolab.it/zzfirewall/generators/composer.json
