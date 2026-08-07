@@ -79,6 +79,59 @@ fxTitle "↙️ Git pulling..."
 git -C "/usr/local/turbolab.it/zzfirewall/" pull
 
 
+fxTitle "🐘 Checking PHP..."
+## .php-version is in the generators directory, while version-variables.sh only looks for it in
+## PROJECT_DIR: without this, PHP_VER would be whatever the box happens to have globally
+PHP_VERSION_FILE_FULLPATH=${SCRIPT_DIR}.php-version
+
+if [ ! -s "${PHP_VERSION_FILE_FULLPATH}" ]; then
+  fxCatastrophicError "##${PHP_VERSION_FILE_FULLPATH}## is missing or empty!"
+fi
+
+PHP_VER="$(head -n 1 "${PHP_VERSION_FILE_FULLPATH}")"
+PHP_CLI="/usr/bin/php${PHP_VER}"
+PHP_FPM="php${PHP_VER}-fpm"
+fxInfo "The generators want PHP ##${PHP_VER}##"
+
+if [ -x "${PHP_CLI}" ]; then
+
+  fxOK "##${PHP_CLI}## is installed"
+
+else
+
+  fxWarning "##${PHP_CLI}## is missing. Installing it now..."
+  ## PHP_VER must be in the env, or the installer stops and asks for it (there's no tty in cron!)
+  PHP_VER=${PHP_VER} bash ${WEBSTACKUP_SCRIPT_DIR}php/install.sh
+
+  if [ ! -x "${PHP_CLI}" ]; then
+    fxCatastrophicError "##${PHP_CLI}## is still missing after the installation!"
+  fi
+
+  fxOK "##${PHP_CLI}## is now installed"
+fi
+
+
+fxTitle "🎼 Checking composer..."
+## this is the very same path wsuComposer runs
+COMPOSER_FULLPATH=/usr/local/bin/composer
+
+if [ -f "${COMPOSER_FULLPATH}" ]; then
+
+  fxOK "##${COMPOSER_FULLPATH}## is installed"
+
+else
+
+  fxWarning "##${COMPOSER_FULLPATH}## is missing. Installing it now..."
+  bash ${WEBSTACKUP_SCRIPT_DIR}php/composer-install.sh
+
+  if [ ! -f "${COMPOSER_FULLPATH}" ]; then
+    fxCatastrophicError "##${COMPOSER_FULLPATH}## is still missing after the installation!"
+  fi
+
+  fxOK "##${COMPOSER_FULLPATH}## is now installed"
+fi
+
+
 fxTitle "📂 Setting up the vendor directory for composer..."
 EXPECTED_USER=$(logname 2>/dev/null)
 
