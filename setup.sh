@@ -27,7 +27,7 @@ fi
 
 
 ## maintainer stuff
-if [ "$(hostname)" = "zane-boraso" ]; then
+if [ "$(hostname)" = "zzfirewall-maintainer" ]; then
   fxLinkBin ${INSTALL_DIR}generators/generate-lists.sh ${SCRIPT_NAME}-generate
   cp "${INSTALL_DIR}generators/cron-maintainer" "/etc/cron.d/zzfirewall_maintainer"
 fi
