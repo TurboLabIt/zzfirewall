@@ -243,9 +243,15 @@ function insertBeforeIpsetRules()
 
   ## https://serverfault.com/q/1128226/188704
   # Keep this before the blocklists, otherwise the system can't connect out to blocked addresses (e.g.: Google Cloud)
-  MSG="📤 Allow EST,REL"
+  #
+  ## --ctdir REPLY is what limits this accept to the case described above, and it's the whole
+  ## point of it: only the traffic coming back from a connection *we* opened is accepted here.
+  ## An INBOUND connection (they opened it -> the packets we receive are ORIGINAL) is left to
+  ## walk the rest of the chain instead: if its source is meanwhile in one of the blocklists, it
+  ## now hits that DROP rule and dies, instead of living forever thanks to this accept. See #6
+  MSG="📤 Allow EST,REL (reply direction: our own outbound connections)"
   echo "$MSG"
-  iptables -A "$ZZFW_CHAIN" -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)"
+  iptables -A "$ZZFW_CHAIN" -m conntrack --ctstate ESTABLISHED,RELATED --ctdir REPLY -j ACCEPT -m comment --comment "$MSG (zzfw)"
 
   if [ "${ALLOW_WEBSERVER_FROM_WHITELIST}" != 0 ]; then
 
@@ -379,10 +385,17 @@ if [ "${ALLOW_CLAUDE}" = 1 ]; then
     -m conntrack --ctstate NEW -m connlimit --connlimit-above ${CLAUDE_MAX_CONNECTIONS} --connlimit-mask 0 \
     -j DROP -m comment --comment "🛑 Claude, ${CLAUDE_MAX_CONNECTIONS}+ concurrent conn (zzfw)"
 
-  ## --ctstate NEW: only new connections count against the limit (established traffic is accepted earlier in the chain)
+  ## --ctstate NEW: only new connections count against the limit (established traffic is accepted right below)
   iptables -A "$ZZFW_CHAIN" -p tcp -m multiport --dport 80,443 -m set --match-set zzfw_Claude src \
     -m conntrack --ctstate NEW -m limit --limit ${CLAUDE_CONN_PER_SEC}/second --limit-burst ${CLAUDE_MAX_CONNECTIONS} \
     -j ACCEPT -m comment --comment "🟢 Claude, max ${CLAUDE_CONN_PER_SEC} conn/s (zzfw)"
+
+  ## a connection accepted by the limiter above must be able to carry on: the EST,REL accept at the
+  ## top of the chain no longer covers it, being limited to the reply direction. Without this, every
+  ## Claude request would be dropped right after its very first packet by the over-limit rule below
+  iptables -A "$ZZFW_CHAIN" -m set --match-set zzfw_Claude src \
+    -m conntrack --ctstate ESTABLISHED,RELATED \
+    -j ACCEPT -m comment --comment "🟢 Claude, established (zzfw)"
 
   ## over-limit traffic must be dropped here: if it fell through, 216.73.216.0/22 (not a Google Cloud IP)
   ## would reach the ALLOW_WEBSERVER ACCEPT, defeating the limits
