@@ -47,18 +47,6 @@ fi
 fxOK "$(whoami) has SSH write access to ${GIT_REPO_SSH_URL}"
 
 
-fxTitle "📥 Unshallowing the repo..."
-if [ "$(git -C "${PROJECT_DIR}" rev-parse --is-shallow-repository)" = "true" ]; then
-
-  git -C "${PROJECT_DIR}" fetch --unshallow
-  fxOK "The repo is now complete"
-
-else
-
-  fxOK "The repo is already complete"
-fi
-
-
 fxTitle "🪪 Setting the git commit identity..."
 git -C "${PROJECT_DIR}" config user.name "zzfirewall-maintainer"
 git -C "${PROJECT_DIR}" config user.email "zzfirewall@turbolab.it"
