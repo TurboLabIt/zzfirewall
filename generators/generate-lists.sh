@@ -12,6 +12,24 @@ GIT_REPO_SSH_URL=git@github.com:TurboLabIt/zzfirewall.git
 GIT_KEY_NOT_OK_TIP="Generate a key with sudo ssh-keygen -t ed25519 -f /root/.ssh/id_ed25519 and add /root/.ssh/id_ed25519.pub to https://github.com/TurboLabIt/zzfirewall/settings/keys as a deploy key, with 'Allow write access' ticked"
 
 
+## these keys are set on the maintainer box only: this is what tells us we are on it.
+## It comes first because it changes nothing: a box which isn't the maintainer is left untouched
+fxTitle "🔧 Checking maintainer keys..."
+KEY_NOT_SET_TIP="Set it in sudo nano /etc/turbolab.it/zzfirewall.conf , see https://github.com/TurboLabIt/zzfirewall/blob/main/zzfirewall.default.conf"
+
+if [ -z "${ABUSEIPDB_KEY}" ]; then
+  fxCatastrophicError "ABUSEIPDB_KEY is not set! ${KEY_NOT_SET_TIP}"
+fi
+
+fxOK "ABUSEIPDB_KEY is set"
+
+if [ -z "${MAXMIND_KEY}" ]; then
+  fxCatastrophicError "MAXMIND_KEY is not set! ${KEY_NOT_SET_TIP}"
+fi
+
+fxOK "MAXMIND_KEY is set"
+
+
 ## it installs jq too, which we need later on for the lists as well
 fxSshSetKnownHosts
 
@@ -54,25 +72,8 @@ fxOK "$(git -C "${PROJECT_DIR}" config user.name) <$(git -C "${PROJECT_DIR}" con
 
 
 fxTitle "🙈 Ignoring the file mode changes..."
-## the chmods around here would otherwise show up as local changes and block the pull
 git -C "${PROJECT_DIR}" config core.fileMode false
 fxOK "core.fileMode is $(git -C "${PROJECT_DIR}" config core.fileMode)"
-
-
-fxTitle "🔧 Checking maintainer keys..."
-KEY_NOT_SET_TIP="Set it in sudo nano /etc/turbolab.it/zzfirewall.conf , see https://github.com/TurboLabIt/zzfirewall/blob/main/zzfirewall.default.conf"
-
-if [ -z "${ABUSEIPDB_KEY}" ]; then
-  fxCatastrophicError "ABUSEIPDB_KEY is not set! ${KEY_NOT_SET_TIP}"
-fi
-
-fxOK "ABUSEIPDB_KEY is set"
-
-if [ -z "${MAXMIND_KEY}" ]; then
-  fxCatastrophicError "MAXMIND_KEY is not set! ${KEY_NOT_SET_TIP}"
-fi
-
-fxOK "MAXMIND_KEY is set"
 
 fxTitle "↙️ Git pulling..."
 git -C "/usr/local/turbolab.it/zzfirewall/" pull
