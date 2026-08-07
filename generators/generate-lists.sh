@@ -6,7 +6,6 @@ source "/usr/local/turbolab.it/webstackup/script/base.sh"
 fxHeader "🛡️ Generate Geo+Black+White lists"
 rootCheck
 fxConfigLoader
-showPHPVer
 
 GIT_REPO_SSH_URL=git@github.com:TurboLabIt/zzfirewall.git
 GIT_KEY_NOT_OK_TIP="Generate a key with sudo ssh-keygen -t ed25519 -f /root/.ssh/id_ed25519 and add /root/.ssh/id_ed25519.pub to https://github.com/TurboLabIt/zzfirewall/settings/keys as a deploy key, with 'Allow write access' ticked"
