@@ -184,37 +184,64 @@ function zzfwReset()
 }
 
 
-function zzfwFlushIpsets()
-{
-  fxTitle "🧹 Flush every zzfw_* ipset..."
-
-  local SET_NAME
-  for SET_NAME in $(ipset list -n | grep '^zzfw_'); do
-    fxInfo "🧹 ${SET_NAME}"
-    ipset flush "$SET_NAME"
-  done
-}
+## 🧹 zzfwFlushIpsets() used to empty every zzfw_* set before refilling it. It's gone on purpose:
+## emptying the live sets is exactly what createIpSet now avoids, by swapping in the new content.
+## zzfirewall-reset.sh is the place for a real flush
 
 
-zzfwReset
-zzfwFlushIpsets
+## 👉 the chain is NOT torn down here: the ipsets below are swapped in atomically, so the
+## previous rules keep protecting the box, with the previous lists, for the whole build.
+## zzfwReset runs further down, right before the chain is rebuilt
 
 
 function createIpSet()
 {
-  if [ ! -f "$2" ]; then
+  local SET_NAME="$1"
+  local SOURCE_FILE="$2"
+
+  if [ ! -f "${SOURCE_FILE}" ]; then
+
+    ## a failed download must not wipe the list which is protecting the box right now
+    fxWarning "🧱 ${SET_NAME}: ##${SOURCE_FILE}## not found, keeping the current content"
     return 0
   fi
 
-  fxTitle "🧱 Building ipset $1 from file..."
-  ipset create $1 nethash -exist hashsize 65536 maxelem 200000
-  while read -r line || [[ -n "$line" ]]; do
-    local FIRSTCHAR="${line:0:1}"
-    if [ "$FIRSTCHAR" != "#" ] && [ "$FIRSTCHAR" != "" ]; then
-      echo "Add: $line" >> "${IP_LOG_FILE}"
-      ipset add $1 $line -exist
-    fi
-  done < "$2"
+  fxTitle "🧱 Building ipset ${SET_NAME} from file..."
+
+  local SET_PARAMS="nethash -exist hashsize 65536 maxelem 200000"
+  local NEW_SET_NAME=${SET_NAME}_new
+  local RESTORE_FILE=${DOWNLOADED_LIST_DIR}${SET_NAME}.restore
+
+  ## the live set is never emptied: it keeps protecting the box, with its previous content,
+  ## until the new one is complete and swapped in
+  ipset create ${SET_NAME} ${SET_PARAMS}
+  ipset destroy ${NEW_SET_NAME} 2>/dev/null
+  ipset create ${NEW_SET_NAME} ${SET_PARAMS}
+
+  ## one single ipset process for the whole list, instead of one per line: ~100x faster (#9).
+  ## tr: CRLF lines would abort the whole restore, while a per-line add just skipped them
+  ## $1: an entry can be followed by an inline comment
+  tr -d '\r' < "${SOURCE_FILE}" | \
+    awk -v s="${NEW_SET_NAME}" '$1 !~ /^#/ && NF > 0 {print "add " s " " $1 " -exist"}' > "${RESTORE_FILE}"
+
+  if [ ! -s "${RESTORE_FILE}" ]; then
+
+    ## same as above: an empty or garbled download must not disable a blocklist
+    fxWarning "🧱 ${SET_NAME}: no usable entry in ##${SOURCE_FILE}##, keeping the current content"
+    ipset destroy ${NEW_SET_NAME}
+    return 0
+  fi
+
+  ipset restore < "${RESTORE_FILE}"
+
+  ## the log is written once, instead of one append per entry
+  cat "${RESTORE_FILE}" >> "${IP_LOG_FILE}"
+
+  ## atomic: every rule matching ${SET_NAME} switches to the new content on this very line
+  ipset swap ${NEW_SET_NAME} ${SET_NAME}
+  ipset destroy ${NEW_SET_NAME}
+
+  fxOK "${SET_NAME}: $(ipset list ${SET_NAME} | awk '/Number of entries/{print $4}') entries"
 }
 
 
@@ -336,19 +363,12 @@ function insertAfterIpsetRules()
 
 
 createIpSet zzfw_Whitelist "$IP_WHITELIST_FULLPATH"
-## the server must be protected while we build the ipsets
-insertBeforeIpsetRules
 for GEOALLOW_COUNTRY in "${GEOALLOW_WEB_COUNTRIES_ARRAY[@]}"; do
   GEOALLOW_COUNTRY=$(echo "$GEOALLOW_COUNTRY" | xargs)
   if [ -n "$GEOALLOW_COUNTRY" ]; then
     createIpSet "zzfw_GeoAllow_${GEOALLOW_COUNTRY}" "${DOWNLOADED_LIST_DIR}geoallow-${GEOALLOW_COUNTRY}.txt"
   fi
 done
-insertAfterIpsetRules
-
-fxTitle "🧱 Intermediate status alpha"
-iptables -nL
-
 
 createIpSet zzfw_Blacklist "$IP_BLACKLIST_FULLPATH"
 createIpSet zzfw_GoogleCloud "$DOWNLOADED_FILE_IPLIST_GOOGLE_CLOUD"
@@ -366,6 +386,9 @@ createIpSet zzfw_GeoSouthAmerica "$DOWNLOADED_FILE_IPLIST_GEO_SOUTH_AMERICA"
 fxTitle "🧹 Delete the temp folder..."
 rm -rf $DOWNLOADED_LIST_DIR
 
+
+## every ipset is ready: only now the chain is torn down and rebuilt, so it's unprotected
+## for the few milliseconds this takes, instead of for the whole download+build
 zzfwReset
 insertBeforeIpsetRules
 
