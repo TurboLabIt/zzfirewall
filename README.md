@@ -78,6 +78,21 @@ GEOBLOCK=0
 ````
 
 
+## Which lists are loaded
+
+The sources are listed, one URL per line, in
+[lists/blocklists.txt](lists/blocklists.txt) and [lists/whitelists.txt](lists/whitelists.txt).
+
+A source is fetched and merged as-is: if it needs filtering, parsing or an API key, it does **not**
+go in the index. It goes into `generators/generate-lists.sh`, which runs on the maintainer box only
+and commits its result to `lists/autogen/blacklist.txt` (that is how AbuseIPDB, firehol_level1,
+stamparm/ipsum and the Contabo ranges get in). An index full of shell pipelines would mean every
+box running internet-fetched code as root.
+
+If a single source is unreachable the others are still applied; if all of them are, the running
+ipsets are left untouched and the box keeps being protected by the previous content.
+
+
 ## Emergency firewall reset
 
 ````bash

@@ -42,6 +42,77 @@ rm -rf $DOWNLOADED_LIST_DIR
 mkdir -p $DOWNLOADED_LIST_DIR
 
 
+## 📃 $1 index URL, $2 local fallback copy of the index, $3 file to build.
+## The index holds one URL per line ("#" = comment): every listed list is downloaded and merged
+## into $3. Keeping the URLs in a downloaded file, instead of hardcoded here, is what lets a
+## source be added/removed fleet-wide: no box ever git-pulls this script after the setup (#3)
+##
+## ⚠️ the index is DATA, never code: a source needing processing does not belong in it, or every
+## box would run internet-fetched shell as root. Those live in generators/generate-lists.sh
+function buildListFromIndex()
+{
+  local INDEX_URL="$1"
+  local INDEX_FALLBACK_FULLPATH="$2"
+  local OUTPUT_FULLPATH="$3"
+
+  local INDEX_FULLPATH=${DOWNLOADED_LIST_DIR}index-$(basename "${INDEX_FALLBACK_FULLPATH}")
+
+  fxTitle "📃 Downloading the list index ${INDEX_URL} ..."
+  ## -f: without it an HTTP error is a "success" and the error page is parsed as if it were a list
+  curl -fLo "${INDEX_FULLPATH}" "${INDEX_URL}"
+
+  if [ "$?" != 0 ] || [ ! -s "${INDEX_FULLPATH}" ]; then
+
+    ## GitHub unreachable: the clone we are running from still knows a working set of sources
+    fxWarning "⚠️ Index download failed, falling back to ##${INDEX_FALLBACK_FULLPATH}##"
+    cp "${INDEX_FALLBACK_FULLPATH}" "${INDEX_FULLPATH}"
+    fxExitOnNonZero "$?"
+  fi
+
+  : > "${OUTPUT_FULLPATH}"
+  local LIST_URL
+  local LIST_FULLPATH=${DOWNLOADED_LIST_DIR}index-item.txt
+
+  ## tr: the index is edited on GitHub, where a CRLF is one click away
+  while read -r LIST_URL; do
+
+    LIST_URL=$(echo "${LIST_URL}" | xargs)
+
+    if [ -z "${LIST_URL}" ] || [ "${LIST_URL:0:1}" = "#" ]; then
+      continue
+    fi
+
+    fxTitle "⏬ Appending ${LIST_URL} ..."
+    ## downloaded aside and appended only once complete: a truncated transfer would otherwise
+    ## leave a half-written entry in the list, and one invalid entry aborts the whole ipset restore
+    curl -fL --compressed -o "${LIST_FULLPATH}" "${LIST_URL}"
+
+    if [ "$?" != 0 ] || [ ! -s "${LIST_FULLPATH}" ]; then
+
+      ## one dead source must not cost us the other ones
+      fxWarning "⚠️ ##${LIST_URL}## download failed, skipping it"
+      continue
+    fi
+
+    {
+      echo ""
+      echo "## ${LIST_URL}"
+      cat "${LIST_FULLPATH}"
+      echo ""
+
+    } >> "${OUTPUT_FULLPATH}"
+
+    fxOK "$(grep -cvE '^\s*(#|$)' "${LIST_FULLPATH}") entries"
+
+  done < <(tr -d '\r' < "${INDEX_FULLPATH}")
+
+  if [ ! -s "${OUTPUT_FULLPATH}" ]; then
+    ## createIpSet keeps the running set as it is, so the box stays protected by the previous content
+    fxWarning "⚠️ every source of ##$(basename "${OUTPUT_FULLPATH}")## failed!"
+  fi
+}
+
+
 fxTitle "🤝 Disable nf_conntrack_tcp_loose"
 ## https://serverfault.com/a/1128235
 if [ "${DISABLE_TCP_LOOSE_CONN}" != 0 ]; then
@@ -54,16 +125,10 @@ fi
 ###################
 # 🟢 WHITELISTS 🟢 #
 ###################
-fxTitle "⏬ Downloading combined IP white list..."
 IP_WHITELIST_FULLPATH=${DOWNLOADED_LIST_DIR}autogen-whitelist.txt
-curl -Lo "${IP_WHITELIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/whitelist.txt
-fxExitOnNonZero "$?"
-echo "" >> $IP_WHITELIST_FULLPATH
-
-fxTitle "⏬ Appending https://github.com/TurboLabIt/zzfirewall/blob/main/lists/whitelist.txt ..."
-curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/whitelist.txt >> $IP_WHITELIST_FULLPATH
-fxExitOnNonZero "$?"
-echo "" >> $IP_WHITELIST_FULLPATH
+buildListFromIndex \
+  https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/whitelists.txt \
+  "${SCRIPT_DIR}lists/whitelists.txt" "${IP_WHITELIST_FULLPATH}"
 
 fxTitle "⏬ Downloading Google IP list (complete)..."
 DOWNLOADED_FILE_IPLIST_GOOGLE_ALL=${DOWNLOADED_LIST_DIR}google.txt
@@ -83,27 +148,10 @@ done
 ####################
 # 🔴 BLACKLISTS 🔴 #
 ####################
-fxTitle "⏬ Downloading combined IP blacklist..."
 IP_BLACKLIST_FULLPATH=${DOWNLOADED_LIST_DIR}autogen-blacklist.txt
-curl -Lo "${IP_BLACKLIST_FULLPATH}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/autogen/blacklist.txt
-fxExitOnNonZero "$?"
-echo "" >> $IP_BLACKLIST_FULLPATH
-
-fxTitle "⏬ Appending https://github.com/TurboLabIt/zzfirewall/blob/main/lists/blacklist.txt ..."
-echo "## https://github.com/TurboLabIt/zzfirewall/blob/main/lists/blacklist.txt" >> $IP_BLACKLIST_FULLPATH
-curl https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/blacklist.txt >> $IP_BLACKLIST_FULLPATH
-fxExitOnNonZero "$?"
-echo "" >> $IP_BLACKLIST_FULLPATH
-
-fxTitle "⏬ Appending http://iplists.firehol.org/ ..."
-echo "## http://iplists.firehol.org/" >> $IP_BLACKLIST_FULLPATH
-curl https://raw.githubusercontent.com/ktsaou/blocklist-ipsets/master/firehol_level1.netset >> $IP_BLACKLIST_FULLPATH
-fxExitOnNonZero "$?"
-echo "" >> $IP_BLACKLIST_FULLPATH
-
-fxTitle "⏬ Appending https://github.com/stamparm/ipsum ..."
-echo "## https://github.com/stamparm/ipsum" >> $IP_BLACKLIST_FULLPATH
-curl --compressed https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt 2>/dev/null | grep -v "#" | grep -v -E "\s[1-2]$" | cut -f 1 >> $IP_BLACKLIST_FULLPATH
+buildListFromIndex \
+  https://raw.githubusercontent.com/TurboLabIt/zzfirewall/main/lists/blocklists.txt \
+  "${SCRIPT_DIR}lists/blocklists.txt" "${IP_BLACKLIST_FULLPATH}"
 
 DOWNLOADED_FILE_IPLIST_GOOGLE_CLOUD=${DOWNLOADED_LIST_DIR}google-cloud.txt
 if [ "${ALLOW_GOOGLE_CLOUD}" != 1 ]; then

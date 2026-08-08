@@ -176,6 +176,39 @@ curl -s 'https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS4002
 | sort -u | grep -v ":" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
 
 
+fxTitle "🧱 Adding iplists.firehol.org to the blacklist..."
+FIREHOL_URL=https://raw.githubusercontent.com/ktsaou/blocklist-ipsets/master/firehol_level1.netset
+FIREHOL_IP=$(curl -fsL --compressed "${FIREHOL_URL}")
+
+CURL_RESULT=$?
+
+if [ "${CURL_RESULT}" != 0 ] || [ -z "${FIREHOL_IP}" ]; then
+  fxCatastrophicError "Download of ##${FIREHOL_URL}## failed!"
+fi
+
+echo "" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
+echo "## 🛑 firehol_level1 - ${FIREHOL_URL}" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
+echo "${FIREHOL_IP}" | grep -v "^#" | grep -v ":" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
+
+
+fxTitle "🧱 Adding stamparm/ipsum to the blacklist..."
+IPSUM_URL=https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt
+## downloaded first and filtered after: in a pipeline $? would be cut's, and a failed curl
+## would go unnoticed
+IPSUM_RAW=$(curl -fsL --compressed "${IPSUM_URL}")
+
+CURL_RESULT=$?
+
+if [ "${CURL_RESULT}" != 0 ] || [ -z "${IPSUM_RAW}" ]; then
+  fxCatastrophicError "Download of ##${IPSUM_URL}## failed!"
+fi
+
+echo "" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
+echo "## 🛑 ipsum, 3+ reports - ${IPSUM_URL}" >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
+## column 2 is the number of blocklists reporting the IP: 1 and 2 are too noisy to be blocked
+echo "${IPSUM_RAW}" | grep -v "^#" | grep -v -E "\s[1-2]$" | cut -f 1 >> ${SCRIPT_DIR}../lists/autogen/blacklist.txt
+
+
 fxTitle "🧱 Adding abuseipdb to the blacklist..."
 ABUSE_IP=$(curl -G https://api.abuseipdb.com/api/v2/blacklist \
   -d limit=500000 \
