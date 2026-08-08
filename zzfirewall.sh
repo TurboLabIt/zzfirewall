@@ -13,7 +13,7 @@ fxTitle "📦 Checking packages...."
 if [ -z "$(command -v curl)" ] || [ -z "$(command -v iptables)" ] || [ -z "$(command -v ipset)" ]; then
 
   fxInfo "Installing packages..."
-  apt update
+  fxAptUpdate
   apt install iptables ipset curl -y
 
 else

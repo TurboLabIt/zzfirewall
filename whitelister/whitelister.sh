@@ -20,7 +20,7 @@ fi
 
 if [ -z "$(command -v dig)" ]; then
 
-  sudo apt update
+  fxAptUpdate
   sudo apt install dnsutils -y
 fi
 
