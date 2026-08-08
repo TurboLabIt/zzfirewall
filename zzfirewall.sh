@@ -256,7 +256,12 @@ function createIpSet()
 
   fxTitle "🧱 Building ipset ${SET_NAME} from file..."
 
-  local SET_PARAMS="nethash -exist hashsize 65536 maxelem 200000"
+  ## maxelem is a ceiling, not a preallocation: an empty set measures the very same 1968 bytes at
+  ## 200k, 500k or 2M, while a full one costs ~31 bytes/entry. Headroom is therefore free, and we
+  ## want it: the blacklist is at ~107k and AbuseIPDB is pulled with limit=500000, uncapped.
+  ## Going over the ceiling is not a failed update, it's a silent one: ipset restore aborts at the
+  ## first refused entry and the half-filled set gets swapped in anyway
+  local SET_PARAMS="nethash -exist hashsize 65536 maxelem 500000"
   local NEW_SET_NAME=${SET_NAME}_new
   local RESTORE_FILE=${DOWNLOADED_LIST_DIR}${SET_NAME}.restore
 
