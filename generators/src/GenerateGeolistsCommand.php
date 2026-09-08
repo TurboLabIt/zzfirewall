@@ -66,8 +66,8 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       // === RUSSIA.TXT ===
       // Uzbekistan, Kazakhstan, Kyrgyzstan
       "UZ" => "russia.txt", "KZ" => "russia.txt", "KG" => "russia.txt",
-      // Latvia (an EU member state too: it feeds eu.txt as well)
-      "LV" => ["russia.txt", "eu.txt"],
+      // Latvia (in europe.txt as well)
+      "LV" => ["russia.txt", "europe.txt"],
       // Russia
       "RU" => "russia.txt",
 
@@ -78,35 +78,50 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       "CO" => "south-america.txt", "PE" => "south-america.txt", "VE" => "south-america.txt",
 
       // ===  ITALY.TXT ===
-      // an EU member state too: it feeds eu.txt as well
-      'IT' => ['italy.txt', 'eu.txt'],
+      // in europe.txt as well
+      'IT' => ['italy.txt', 'europe.txt'],
 
       // ===  SWITZERLAND.TXT ===
-      // not in the EU
-      'CH' => 'switzerland.txt',
+      // in europe.txt as well
+      'CH' => ['switzerland.txt', 'europe.txt'],
 
-      // ===  EU.TXT ===
-      // the 27 EU member states. IT and LV are above, with both their files: a code can appear only
-      // once in this array (PHP silently keeps the last duplicate key), so a country belonging to two
-      // lists gets an array of files instead
-      // Austria, Belgium, Bulgaria
-      "AT" => "eu.txt", "BE" => "eu.txt", "BG" => "eu.txt",
-      // Croatia, Cyprus, Czechia
-      "HR" => "eu.txt", "CY" => "eu.txt", "CZ" => "eu.txt",
-      // Denmark, Estonia, Finland
-      "DK" => "eu.txt", "EE" => "eu.txt", "FI" => "eu.txt",
-      // France, Germany, Greece
-      "FR" => "eu.txt", "DE" => "eu.txt", "GR" => "eu.txt",
-      // Hungary, Ireland, Lithuania
-      "HU" => "eu.txt", "IE" => "eu.txt", "LT" => "eu.txt",
-      // Luxembourg, Malta, Netherlands
-      "LU" => "eu.txt", "MT" => "eu.txt", "NL" => "eu.txt",
-      // Poland, Portugal, Romania
-      "PL" => "eu.txt", "PT" => "eu.txt", "RO" => "eu.txt",
-      // Slovakia, Slovenia, Spain
-      "SK" => "eu.txt", "SI" => "eu.txt", "ES" => "eu.txt",
-      // Sweden
-      "SE" => "eu.txt"
+      // ===  EUROPE.TXT ===
+      // every nation from Portugal to the Ukrainian border: the EU, the UK, EFTA, the Balkans and
+      // the microstates. Ukraine, Belarus, Moldova, Russia and Turkey are out.
+      // IT, CH and LV are above, with both their files: a code can appear only once in this array
+      // (PHP silently keeps the last duplicate key), so a country in two lists gets an array of files
+      // Portugal, Spain, Andorra
+      "PT" => "europe.txt", "ES" => "europe.txt", "AD" => "europe.txt",
+      // Gibraltar, France, Monaco
+      "GI" => "europe.txt", "FR" => "europe.txt", "MC" => "europe.txt",
+      // Belgium, Netherlands, Luxembourg
+      "BE" => "europe.txt", "NL" => "europe.txt", "LU" => "europe.txt",
+      // United Kingdom, Ireland, Isle of Man
+      "GB" => "europe.txt", "IE" => "europe.txt", "IM" => "europe.txt",
+      // Jersey, Guernsey, Iceland
+      "JE" => "europe.txt", "GG" => "europe.txt", "IS" => "europe.txt",
+      // Norway, Svalbard and Jan Mayen, Faroe Islands
+      "NO" => "europe.txt", "SJ" => "europe.txt", "FO" => "europe.txt",
+      // Denmark, Sweden, Finland
+      "DK" => "europe.txt", "SE" => "europe.txt", "FI" => "europe.txt",
+      // Åland Islands, Estonia, Lithuania
+      "AX" => "europe.txt", "EE" => "europe.txt", "LT" => "europe.txt",
+      // Germany, Austria, Liechtenstein
+      "DE" => "europe.txt", "AT" => "europe.txt", "LI" => "europe.txt",
+      // San Marino, Vatican City, Malta
+      "SM" => "europe.txt", "VA" => "europe.txt", "MT" => "europe.txt",
+      // Poland, Czechia, Slovakia
+      "PL" => "europe.txt", "CZ" => "europe.txt", "SK" => "europe.txt",
+      // Hungary, Romania, Bulgaria
+      "HU" => "europe.txt", "RO" => "europe.txt", "BG" => "europe.txt",
+      // Greece, Cyprus, Albania
+      "GR" => "europe.txt", "CY" => "europe.txt", "AL" => "europe.txt",
+      // ex-Yugoslavia: Slovenia, Croatia, Bosnia and Herzegovina
+      "SI" => "europe.txt", "HR" => "europe.txt", "BA" => "europe.txt",
+      // ex-Yugoslavia: Serbia, Montenegro, North Macedonia
+      "RS" => "europe.txt", "ME" => "europe.txt", "MK" => "europe.txt",
+      // ex-Yugoslavia: Kosovo
+      "XK" => "europe.txt"
     ];
 
     // 💡 https://github.com/TurboLabIt/php-symfony-basecommand/blob/main/src/Traits/CliOptionsTrait.php
@@ -234,7 +249,7 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
         $me->arrCountry[$id] = [
           static::COUNTRY_NAME  => $name,
           static::COUNTRY_CODE  => $code,
-          // always an array: a country can feed more than one file (IT: italy.txt and eu.txt)
+          // always an array: a country can feed more than one file (IT: italy.txt and europe.txt)
           static::FILEMAP_NAME  => (array)static::COUNTRY_FILEMAP[$code]
         ];
       });

@@ -47,7 +47,8 @@ ALLOW_WEBSERVER=0
 GEOALLOW_WEB_COUNTRIES=italy,switzerland
 ````
 
-`eu` (case-insensitive) stands for all the 27 EU member states. Switzerland is not one of them: `eu,switzerland`.
+`europe` (case-insensitive) stands for every nation from Portugal to the Ukrainian border: the EU, the UK, Switzerland,
+Norway, Iceland, the Balkans and the microstates. Ukraine, Belarus, Moldova, Russia and Turkey are not in it.
 The available names are the files in [lists/geos](lists/geos).
 
 
