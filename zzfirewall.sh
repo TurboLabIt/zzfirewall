@@ -134,7 +134,9 @@ fxTitle "⏬ Downloading Google IP list (complete)..."
 DOWNLOADED_FILE_IPLIST_GOOGLE_ALL=${DOWNLOADED_LIST_DIR}google.txt
 curl -Lo "${DOWNLOADED_FILE_IPLIST_GOOGLE_ALL}" https://raw.githubusercontent.com/TurboLabIt/zzfirewall/refs/heads/main/lists/autogen/google.txt
 
-IFS=',' read -ra GEOALLOW_WEB_COUNTRIES_ARRAY <<< "$GEOALLOW_WEB_COUNTRIES"
+## ${var,,} lowercases it: "EU", "Eu" and "eu" are the same list. Each name is a file in lists/geos/
+## on GitHub, and raw.githubusercontent.com is case-sensitive: "Italy" would 404
+IFS=',' read -ra GEOALLOW_WEB_COUNTRIES_ARRAY <<< "${GEOALLOW_WEB_COUNTRIES,,}"
 for GEOALLOW_COUNTRY in "${GEOALLOW_WEB_COUNTRIES_ARRAY[@]}"; do
 
   GEOALLOW_COUNTRY=$(echo "$GEOALLOW_COUNTRY" | xargs)

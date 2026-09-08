@@ -47,6 +47,9 @@ ALLOW_WEBSERVER=0
 GEOALLOW_WEB_COUNTRIES=italy,switzerland
 ````
 
+`eu` (case-insensitive) stands for all the 27 EU member states. Switzerland is not one of them: `eu,switzerland`.
+The available names are the files in [lists/geos](lists/geos).
+
 
 ## How to Cloudflare
 

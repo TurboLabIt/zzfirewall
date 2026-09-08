@@ -66,8 +66,8 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       // === RUSSIA.TXT ===
       // Uzbekistan, Kazakhstan, Kyrgyzstan
       "UZ" => "russia.txt", "KZ" => "russia.txt", "KG" => "russia.txt",
-      // Latvia
-      "LV" => "russia.txt",
+      // Latvia (an EU member state too: it feeds eu.txt as well)
+      "LV" => ["russia.txt", "eu.txt"],
       // Russia
       "RU" => "russia.txt",
 
@@ -78,10 +78,35 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       "CO" => "south-america.txt", "PE" => "south-america.txt", "VE" => "south-america.txt",
 
       // ===  ITALY.TXT ===
-      'IT' => 'italy.txt',
+      // an EU member state too: it feeds eu.txt as well
+      'IT' => ['italy.txt', 'eu.txt'],
 
       // ===  SWITZERLAND.TXT ===
-      'CH' => 'switzerland.txt'
+      // not in the EU
+      'CH' => 'switzerland.txt',
+
+      // ===  EU.TXT ===
+      // the 27 EU member states. IT and LV are above, with both their files: a code can appear only
+      // once in this array (PHP silently keeps the last duplicate key), so a country belonging to two
+      // lists gets an array of files instead
+      // Austria, Belgium, Bulgaria
+      "AT" => "eu.txt", "BE" => "eu.txt", "BG" => "eu.txt",
+      // Croatia, Cyprus, Czechia
+      "HR" => "eu.txt", "CY" => "eu.txt", "CZ" => "eu.txt",
+      // Denmark, Estonia, Finland
+      "DK" => "eu.txt", "EE" => "eu.txt", "FI" => "eu.txt",
+      // France, Germany, Greece
+      "FR" => "eu.txt", "DE" => "eu.txt", "GR" => "eu.txt",
+      // Hungary, Ireland, Lithuania
+      "HU" => "eu.txt", "IE" => "eu.txt", "LT" => "eu.txt",
+      // Luxembourg, Malta, Netherlands
+      "LU" => "eu.txt", "MT" => "eu.txt", "NL" => "eu.txt",
+      // Poland, Portugal, Romania
+      "PL" => "eu.txt", "PT" => "eu.txt", "RO" => "eu.txt",
+      // Slovakia, Slovenia, Spain
+      "SK" => "eu.txt", "SI" => "eu.txt", "ES" => "eu.txt",
+      // Sweden
+      "SE" => "eu.txt"
     ];
 
     // 💡 https://github.com/TurboLabIt/php-symfony-basecommand/blob/main/src/Traits/CliOptionsTrait.php
@@ -209,7 +234,8 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
         $me->arrCountry[$id] = [
           static::COUNTRY_NAME  => $name,
           static::COUNTRY_CODE  => $code,
-          static::FILEMAP_NAME  => static::COUNTRY_FILEMAP[$code]
+          // always an array: a country can feed more than one file (IT: italy.txt and eu.txt)
+          static::FILEMAP_NAME  => (array)static::COUNTRY_FILEMAP[$code]
         ];
       });
 
@@ -261,23 +287,25 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
 
     protected function addEntryToFile($arrIp, $arrCountry) : self
     {
-      $countryId  = $arrIp[static::GEONAME_ID];
-      $fileName   = $arrCountry[static::FILEMAP_NAME];
+      $countryId = $arrIp[static::GEONAME_ID];
 
-      if( !array_key_exists($fileName, $this->arrFilesToWrite) ) {
-        $this->arrFilesToWrite[$fileName] = [];
+      foreach($arrCountry[static::FILEMAP_NAME] as $fileName) {
+
+        if( !array_key_exists($fileName, $this->arrFilesToWrite) ) {
+          $this->arrFilesToWrite[$fileName] = [];
+        }
+
+        if( !array_key_exists($countryId, $this->arrFilesToWrite[$fileName]) ) {
+
+          $this->arrFilesToWrite[$fileName][$countryId] = [
+
+            static::COUNTRY_NAME  => $arrCountry[static::COUNTRY_NAME],
+            static::IP_NETWORK    => []
+          ];
+        }
+
+        $this->arrFilesToWrite[$fileName][$countryId][static::IP_NETWORK][] = $arrIp[static::IP_NETWORK];
       }
-
-      if( !array_key_exists($countryId, $this->arrFilesToWrite[$fileName]) ) {
-
-        $this->arrFilesToWrite[$fileName][$countryId] = [
-
-          static::COUNTRY_NAME  => $arrCountry[static::COUNTRY_NAME],
-          static::IP_NETWORK    => []
-        ];
-      }
-
-      $this->arrFilesToWrite[$fileName][$countryId][static::IP_NETWORK][] = $arrIp[static::IP_NETWORK];
 
       return $this;
     }
