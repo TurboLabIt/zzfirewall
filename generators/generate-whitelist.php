@@ -69,6 +69,33 @@ $txtWhitelist .= $txtMeta;
 
 
 /**
+ * Allow connections from GitHub (webhooks)...
+ * ==========================================
+ */
+// https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-githubs-ip-addresses
+// "hooks" is the list GitHub delivers webhooks from, and it's the only one taken: "actions" alone
+// is thousands of Azure ranges, and none of them ever calls us
+const GITHUB_META_URL = 'https://api.github.com/meta';
+echo "⚙️ Adding from GitHub (webhooks) - " . GITHUB_META_URL . "..." . PHP_EOL;
+$txtGithub = implode(PHP_EOL, getGithubIpList(GITHUB_META_URL, 'hooks') ) . PHP_EOL;
+$txtWhitelist .= PHP_EOL . PHP_EOL . '## 🔎 Allow from GitHub (webhooks) - ' . GITHUB_META_URL . PHP_EOL;
+$txtWhitelist .= $txtGithub;
+
+
+/**
+ * Allow connections from Bitbucket (webhooks)...
+ * =============================================
+ */
+// https://support.atlassian.com/bitbucket-cloud/docs/what-are-the-bitbucket-cloud-ip-addresses-i-should-use-to-configure-my-corporate-firewall/
+// egress only: the ranges Bitbucket connects out from (webhooks). The ingress ones are what it listens on
+const ATLASSIAN_IP_RANGES_URL = 'https://ip-ranges.atlassian.com/';
+echo "⚙️ Adding from Bitbucket (webhooks) - " . ATLASSIAN_IP_RANGES_URL . "..." . PHP_EOL;
+$txtBitbucket = implode(PHP_EOL, getAtlassianIpList(ATLASSIAN_IP_RANGES_URL, 'bitbucket') ) . PHP_EOL;
+$txtWhitelist .= PHP_EOL . PHP_EOL . '## 🔎 Allow from Bitbucket (webhooks) - ' . ATLASSIAN_IP_RANGES_URL . PHP_EOL;
+$txtWhitelist .= $txtBitbucket;
+
+
+/**
  * Writing the file...
  * ===================
  */
@@ -85,6 +112,14 @@ file_put_contents($filePath, $txtGoogle);
 $filePath = WHITELIST_OUT_PATH . 'meta.txt';
 echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
 file_put_contents($filePath, $txtMeta);
+
+$filePath = WHITELIST_OUT_PATH . 'github.txt';
+echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
+file_put_contents($filePath, $txtGithub);
+
+$filePath = WHITELIST_OUT_PATH . 'bitbucket.txt';
+echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
+file_put_contents($filePath, $txtBitbucket);
 
 
 echo "⚙️ Writing all Google IP list (all services, including public cloud) - not whitelisted..." . PHP_EOL;

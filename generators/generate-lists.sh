@@ -235,6 +235,8 @@ git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/google-search.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/google-cloud.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/claude.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/meta.txt
+git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/github.txt
+git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/bitbucket.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/blacklist.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/geos/arab.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/geos/china.txt
