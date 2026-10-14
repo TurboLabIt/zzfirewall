@@ -517,6 +517,41 @@ addDropRule zzfw_GeoSouthAmerica "${GEOBLOCK_SOUTH_AMERICA}"
 
 insertAfterIpsetRules
 
+
+## Pure-FTPd marks its own packets with IP TOS 0x10 (control) / 0x08 (data). Along some paths
+## (seen on OVH) the marked replies get dropped on and off, while unmarked traffic from the same
+## box flows fine: the client logs in, then stalls on the listing. Clearing the mark fixes it.
+## Own chain in mangle/OUTPUT: flushed and rebuilt on every run, just like $ZZFW_CHAIN
+function zzfwFtpClearTos()
+{
+  local MANGLE_CHAIN=${ZZFW_CHAIN}_MANGLE
+
+  fxTitle "📁 Clear the TOS mark from outgoing FTP packets..."
+
+  iptables -t mangle -N "$MANGLE_CHAIN" >/dev/null 2>&1
+
+  iptables -t mangle -C OUTPUT -j "$MANGLE_CHAIN" -m comment --comment "(zzfw)" >/dev/null 2>&1
+  if [ $? != 0 ]; then
+
+    fxInfo "🔗 Hooking ${MANGLE_CHAIN} to mangle/OUTPUT"
+    iptables -t mangle -A OUTPUT -j "$MANGLE_CHAIN" -m comment --comment "(zzfw)"
+  fi
+
+  iptables -t mangle -F "$MANGLE_CHAIN"
+
+  if [ "${ALLOW_FTP}" = 0 ]; then
+
+    fxInfo "ALLOW_FTP=0, skipping"
+    return 0
+  fi
+
+  MSG="📁 FTP: clear TOS/DSCP"
+  echo "$MSG"
+  iptables -t mangle -A "$MANGLE_CHAIN" -p tcp -m multiport --sport 20,21,990,2121:2221 -j DSCP --set-dscp 0 -m comment --comment "$MSG (zzfw)"
+}
+
+zzfwFtpClearTos
+
 bash "${SCRIPT_DIR}whitelister/whitelister.sh"
 
 
@@ -547,6 +582,7 @@ fi
 
 fxTitle "🧱🧱🧱 FINAL FIREWALL STATUS 🧱🧱🧱"
 iptables -nL
+iptables -t mangle -nL "${ZZFW_CHAIN}_MANGLE"
 
 fxTitle "Need the log?"
 fxMessage "nano ${IP_LOG_FILE}"
