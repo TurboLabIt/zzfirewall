@@ -25,6 +25,26 @@ $txtBing = implode(PHP_EOL, getGoogleIpList(BINGBOT_URL) ) . PHP_EOL;
 $txtWhitelist .= $txtBing;
 
 
+echo "⚙️ Allow from DuckDuckBot (search)..." . PHP_EOL;
+// https://duckduckgo.com/duckduckgo-help-pages/results/duckduckbot
+// same JSON format as Google's ("prefixes" => "ipv4Prefix"), so getGoogleIpList() parses it as it is
+const DUCKDUCKBOT_URL = 'https://duckduckgo.com/duckduckbot.json';
+$txtWhitelist .= PHP_EOL . PHP_EOL . '## 🔎 Allow from DuckDuckBot - ' . DUCKDUCKBOT_URL . PHP_EOL;
+
+$txtDuckDuckGo = implode(PHP_EOL, getGoogleIpList(DUCKDUCKBOT_URL) ) . PHP_EOL;
+$txtWhitelist .= $txtDuckDuckGo;
+
+
+echo "⚙️ Allow from Applebot (search)..." . PHP_EOL;
+// https://support.apple.com/en-us/119829
+// same JSON format as Google's ("prefixes" => "ipv4Prefix"), so getGoogleIpList() parses it as it is
+const APPLEBOT_URL = 'https://search.developer.apple.com/applebot.json';
+$txtWhitelist .= PHP_EOL . PHP_EOL . '## 🔎 Allow from Applebot - ' . APPLEBOT_URL . PHP_EOL;
+
+$txtApple = implode(PHP_EOL, getGoogleIpList(APPLEBOT_URL) ) . PHP_EOL;
+$txtWhitelist .= $txtApple;
+
+
 /**
  * Allow connections from Uptimerobot...
  * ===================================
@@ -122,6 +142,14 @@ file_put_contents($filePath, $txtGoogle);
 $filePath = WHITELIST_OUT_PATH . 'bing-search.txt';
 echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
 file_put_contents($filePath, $txtBing);
+
+$filePath = WHITELIST_OUT_PATH . 'duckduckgo-search.txt';
+echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
+file_put_contents($filePath, $txtDuckDuckGo);
+
+$filePath = WHITELIST_OUT_PATH . 'apple-search.txt';
+echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
+file_put_contents($filePath, $txtApple);
 
 $filePath = WHITELIST_OUT_PATH . 'meta.txt';
 echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
