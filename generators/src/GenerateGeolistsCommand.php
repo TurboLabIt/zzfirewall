@@ -50,14 +50,20 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       "CN" => "china.txt", "LA" => "china.txt", "MN" => "china.txt",
       // Bhutan, Vietnam, Thailand
       "BT" => "china.txt", "VN" => "china.txt", "TH" => "china.txt",
-      // Singapore
-      "SG" => "china.txt",
+      // Singapore, Hong Kong, Macau (MaxMind lists HK and MO apart from CN)
+      "SG" => "china.txt", "HK" => "china.txt", "MO" => "china.txt",
+      // Taiwan
+      "TW" => "china.txt",
 
       // === INDIA.TXT ===
       // Bangladesh, Sri Lanka, India
       "BD" => "india.txt", "LK" => "india.txt", "IN" => "india.txt",
       // Nepal, Indonesia, Cambodia
       "NP" => "india.txt", "ID" => "india.txt", "KH" => "india.txt",
+      // Myanmar, Maldives, Malaysia
+      "MM" => "india.txt", "MV" => "india.txt", "MY" => "india.txt",
+      // Brunei, Philippines, Timor-Leste
+      "BN" => "india.txt", "PH" => "india.txt", "TL" => "india.txt",
 
       // === KOREA.TXT ===
       // South Korea, North Korea
@@ -66,6 +72,8 @@ class GenerateGeolistsCommand extends AbstractBaseCommand
       // === RUSSIA.TXT ===
       // Uzbekistan, Kazakhstan, Kyrgyzstan
       "UZ" => "russia.txt", "KZ" => "russia.txt", "KG" => "russia.txt",
+      // Tajikistan, Turkmenistan
+      "TJ" => "russia.txt", "TM" => "russia.txt",
       // Latvia (in europe.txt as well)
       "LV" => ["russia.txt", "europe.txt"],
       // Russia
