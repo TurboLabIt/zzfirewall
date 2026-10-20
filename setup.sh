@@ -19,8 +19,11 @@ if [ ! -f "/etc/cron.d/zzfirewall" ]; then
 fi
 
 
-if [ ! -f "/etc/letsencrypt/renewal-hooks/" ]; then
+if [ -d "/etc/letsencrypt/renewal-hooks/" ]; then
 
+  ## certbot creates pre/ and post/ on its first run, while webstackup letsencrypt-install.sh
+  ## only creates deploy/: a new server gets the firewall before any certbot run
+  mkdir -p "/etc/letsencrypt/renewal-hooks/pre/" "/etc/letsencrypt/renewal-hooks/post/"
   fxLink "${INSTALL_DIR}hooks/lets-encrypt-web-01-pre.sh" "/etc/letsencrypt/renewal-hooks/pre/zzfirewall-web-open.sh"
   fxLink "${INSTALL_DIR}hooks/lets-encrypt-web-90-post.sh" "/etc/letsencrypt/renewal-hooks/post/zzfirewall-web-close.sh"
 fi
