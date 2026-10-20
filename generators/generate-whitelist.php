@@ -15,6 +15,16 @@ $txtGoogle = implode(PHP_EOL, getGoogleIpList(GOOGLEBOT_URL) ) . PHP_EOL;
 $txtWhitelist .= $txtGoogle;
 
 
+echo "⚙️ Allow from Bingbot (search)..." . PHP_EOL;
+// https://www.bing.com/toolbox/verify-bingbot
+// same JSON format as Google's ("prefixes" => "ipv4Prefix"), so getGoogleIpList() parses it as it is
+const BINGBOT_URL = 'https://www.bing.com/toolbox/bingbot.json';
+$txtWhitelist .= PHP_EOL . PHP_EOL . '## 🔎 Allow from Bingbot - ' . BINGBOT_URL . PHP_EOL;
+
+$txtBing = implode(PHP_EOL, getGoogleIpList(BINGBOT_URL) ) . PHP_EOL;
+$txtWhitelist .= $txtBing;
+
+
 /**
  * Allow connections from Uptimerobot...
  * ===================================
@@ -108,6 +118,10 @@ file_put_contents($filePath, $txtWhitelist);
 $filePath = WHITELIST_OUT_PATH . 'google-search.txt';
 echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
 file_put_contents($filePath, $txtGoogle);
+
+$filePath = WHITELIST_OUT_PATH . 'bing-search.txt';
+echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
+file_put_contents($filePath, $txtBing);
 
 $filePath = WHITELIST_OUT_PATH . 'meta.txt';
 echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
