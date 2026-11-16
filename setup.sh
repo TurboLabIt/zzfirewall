@@ -32,6 +32,8 @@ fi
 ## maintainer stuff
 if [ "$(hostname)" = "zzfirewall-maintainer" ]; then
   fxLinkBin ${INSTALL_DIR}generators/generate-lists.sh ${SCRIPT_NAME}-generate
+  ## the cron line logs in there: if the directory is missing, cron doesn't even start the command
+  mkdir -p "/var/log/turbolab.it/"
   cp "${INSTALL_DIR}generators/cron-maintainer" "/etc/cron.d/zzfirewall_maintainer"
 fi
 
