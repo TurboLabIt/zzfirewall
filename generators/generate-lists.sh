@@ -256,6 +256,6 @@ fxTitle "☁️ Git pulling..."
 git -C ${SCRIPT_DIR}../ pull --no-edit
 
 ## every run commits a few MB of lists: left alone, the local history piles up forever (~50 MB/year)
-fxPushAndShallow "${PROJECT_DIR}"
+fxGitPushAndShallow "${PROJECT_DIR}"
 
 fxEndFooter
