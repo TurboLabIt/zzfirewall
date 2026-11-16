@@ -99,6 +99,20 @@ $txtWhitelist .= $txtMeta;
 
 
 /**
+ * Allow connections from LinkedIn...
+ * ==================================
+ */
+// LinkedIn publishes no IP list. LinkedInBot (the link previews) comes from the *.fwd.linkedin.com
+// egress pool, which is all in AS14413. AS13443 is LinkedIn's too, but it has no fwd.linkedin.com host
+// https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS14413
+const LINKEDIN_ASN = 'AS14413';
+echo "⚙️ Adding from LinkedIn - " . LINKEDIN_ASN . "..." . PHP_EOL;
+$txtLinkedin = implode(PHP_EOL, getRipeIpList(LINKEDIN_ASN) ) . PHP_EOL;
+$txtWhitelist .= PHP_EOL . PHP_EOL . '## 🔎 Allow from LinkedIn - ' . LINKEDIN_ASN . PHP_EOL;
+$txtWhitelist .= $txtLinkedin;
+
+
+/**
  * Allow connections from GitHub (webhooks)...
  * ==========================================
  */
@@ -154,6 +168,10 @@ file_put_contents($filePath, $txtApple);
 $filePath = WHITELIST_OUT_PATH . 'meta.txt';
 echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
 file_put_contents($filePath, $txtMeta);
+
+$filePath = WHITELIST_OUT_PATH . 'linkedin.txt';
+echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;
+file_put_contents($filePath, $txtLinkedin);
 
 $filePath = WHITELIST_OUT_PATH . 'github.txt';
 echo "⚙️ Writing the file to " . $filePath . "..." . PHP_EOL;

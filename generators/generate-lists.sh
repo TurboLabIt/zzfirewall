@@ -238,6 +238,7 @@ git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/apple-search.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/google-cloud.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/claude.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/meta.txt
+git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/linkedin.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/github.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/bitbucket.txt
 git -C ${SCRIPT_DIR}../ add ${SCRIPT_DIR}../lists/autogen/blacklist.txt
@@ -256,6 +257,6 @@ fxTitle "☁️ Git pulling..."
 git -C ${SCRIPT_DIR}../ pull --no-edit
 
 ## every run commits a few MB of lists: left alone, the local history piles up forever (~50 MB/year)
-fxPushAndShallow "${PROJECT_DIR}"
+fxGitPushAndShallow "${PROJECT_DIR}"
 
 fxEndFooter
