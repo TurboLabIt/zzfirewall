@@ -116,6 +116,10 @@ function buildListFromIndex()
 fxTitle "🤝 Disable nf_conntrack_tcp_loose"
 ## https://serverfault.com/a/1128235
 if [ "${DISABLE_TCP_LOOSE_CONN}" != 0 ]; then
+  ## the sysctl exists only once nf_conntrack is loaded. After a boot nothing has loaded it yet (the first conntrack
+  ## rule below does, too late): the sysctl failed and the box ran with tcp_loose=1 until the next run.
+  ## 2>/dev/null: a container can't load modules (the host's one is enough), a real failure still shows in the sysctl
+  modprobe nf_conntrack 2>/dev/null
   sysctl -w net.netfilter.nf_conntrack_tcp_loose=0
 else
   fxInfo "Disabled in config, skipping"
