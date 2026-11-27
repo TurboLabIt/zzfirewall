@@ -21,9 +21,17 @@ else
 fi
 
 fxTitle "🔄 Restoring iptables to default..."
-iptables-save | awk '/^[*]/ { print $1 }
-                     /^:[A-Z]+ [^-]/ { print $1 " ACCEPT" ; }
-                     /COMMIT/ { print $0; }' | iptables-restore
+IPTABLES_RESET_AWK='/^[*]/ { print $1 }
+                    /^:[A-Z]+ [^-]/ { print $1 " ACCEPT" ; }
+                    /COMMIT/ { print $0; }'
+iptables-save | awk "$IPTABLES_RESET_AWK" | iptables-restore
+
+## the zzfirewall ALLOW_IPV6=0 rules. No IPv6 in the kernel (ipv6.disable=1): no ip6tables either
+if [ -f /proc/net/if_inet6 ]; then
+
+  fxTitle "🔄 Restoring ip6tables to default..."
+  ip6tables-save | awk "$IPTABLES_RESET_AWK" | ip6tables-restore
+fi
 
 
 if [ ! -z "$(command -v ipset)" ]; then
@@ -54,6 +62,11 @@ fi
 
 fxTitle "🧱 Current status"
 iptables -nL
+
+if [ -f /proc/net/if_inet6 ]; then
+  echo ""
+  ip6tables -nL
+fi
 
 if [ ! -z "$(command -v ipset)" ]; then
   echo ""

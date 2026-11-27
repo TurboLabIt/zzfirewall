@@ -82,6 +82,18 @@ GEOBLOCK=0
 ````
 
 
+## IPv6
+
+The lists and the rules are IPv4-only. With the default `ALLOW_IPV6=0`, every new incoming IPv6 connection is refused
+instead: TCP gets a reset, so a client which tries IPv6 first moves to IPv4 at once. Outgoing IPv6 keeps working.
+
+To leave IPv6 unfiltered:
+
+````bash
+ALLOW_IPV6=1
+````
+
+
 ## Which lists are loaded
 
 The sources are listed, one URL per line, in
@@ -103,7 +115,7 @@ ipsets are left untouched and the box keeps being protected by the previous cont
 sudo zzfirewall-reset
 ````
 
-It wipes every iptables rule and every ipset on the box. If Docker is installed and running, it gets restarted automatically so it can rebuild its own iptables rules.
+It wipes every iptables and ip6tables rule and every ipset on the box. If Docker is installed and running, it gets restarted automatically so it can rebuild its own iptables rules.
 
 
 ----

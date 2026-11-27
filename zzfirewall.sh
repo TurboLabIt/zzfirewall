@@ -122,6 +122,68 @@ else
 fi
 
 
+## 🌐 the lists and the rules below are IPv4-only. ALLOW_IPV6=0 refuses every new incoming IPv6 connection instead,
+## so that none of them can be walked around over IPv6, while outgoing IPv6 keeps working. It needs no list: it's
+## built here, before the downloads, so the box is covered from the very start of the run
+function zzfwIpv6()
+{
+  fxTitle "🌐 IPv6: incoming connections..."
+
+  ## ipv6.disable=1 on the kernel command line: there's no ip6tables to talk to
+  if [ ! -f /proc/net/if_inet6 ]; then
+
+    fxInfo "IPv6 is disabled in the kernel, skipping"
+    return 0
+  fi
+
+  fxIptablesCreateChainIfNotExists "$ZZFW_CHAIN" silent ipv6
+
+  ip6tables -C INPUT -j "$ZZFW_CHAIN" -m comment --comment "(zzfw)" >/dev/null 2>&1
+  if [ $? != 0 ]; then
+
+    fxInfo "🔗 Hooking ${ZZFW_CHAIN} to the IPv6 INPUT"
+    ip6tables -A INPUT -j "$ZZFW_CHAIN" -m comment --comment "(zzfw)"
+  fi
+
+  ## rebuilt on every run, like the IPv4 chain. ALLOW_IPV6=1 leaves it empty: IPv6 isn't filtered at all
+  ip6tables -F "$ZZFW_CHAIN"
+
+  if [ "${ALLOW_IPV6}" != 0 ]; then
+
+    fxInfo "ALLOW_IPV6=1, IPv6 is not filtered"
+    return 0
+  fi
+
+  MSG="🏡 Allow from loopback"
+  echo "$MSG"
+  ip6tables -A "$ZZFW_CHAIN" -i lo -j ACCEPT -m comment --comment "$MSG (zzfw)"
+
+  ## no --ctdir REPLY, unlike IPv4: no incoming IPv6 connection is ever accepted below,
+  ## so there's none to re-check against the blocklists
+  MSG="📤 Allow EST,REL (our own outbound connections)"
+  echo "$MSG"
+  ip6tables -A "$ZZFW_CHAIN" -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT -m comment --comment "$MSG (zzfw)"
+
+  ## Neighbor Discovery (the IPv6 ARP: how the box reaches its own gateway) is ICMPv6,
+  ## and conntrack doesn't track it: without this, outgoing IPv6 dies too
+  MSG="🏓 Allow ICMPv6"
+  echo "$MSG"
+  ip6tables -A "$ZZFW_CHAIN" -p ipv6-icmp -j ACCEPT -m comment --comment "$MSG (zzfw)"
+
+  ## refused, not dropped: a client trying IPv6 first (any name with an AAAA record) moves to IPv4 at once,
+  ## where the real rules apply. A DROP leaves ssh, wget and most scripts hanging ~2 min before they try IPv4
+  MSG="🚫 Refuse TCP (instant fallback to IPv4)"
+  echo "$MSG"
+  ip6tables -A "$ZZFW_CHAIN" -p tcp -j REJECT --reject-with tcp-reset -m comment --comment "$MSG (zzfw)"
+
+  MSG="🛑 Drop everything else"
+  echo "$MSG"
+  ip6tables -A "$ZZFW_CHAIN" -j DROP -m comment --comment "$MSG (zzfw)"
+}
+
+zzfwIpv6
+
+
 ###################
 # 🟢 WHITELISTS 🟢 #
 ###################
@@ -583,6 +645,10 @@ fi
 fxTitle "🧱🧱🧱 FINAL FIREWALL STATUS 🧱🧱🧱"
 iptables -nL
 iptables -t mangle -nL "${ZZFW_CHAIN}_MANGLE"
+
+if [ -f /proc/net/if_inet6 ]; then
+  ip6tables -nL "$ZZFW_CHAIN"
+fi
 
 fxTitle "Need the log?"
 fxMessage "nano ${IP_LOG_FILE}"
